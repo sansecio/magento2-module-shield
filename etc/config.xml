@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <sansec_shield>
+            <general>
+                <enabled>1</enabled>
+                <rules_url>https://api.sansec.io/shield/rules</rules_url>
+            </general>
+        </sansec_shield>
+    </default>
+</config>

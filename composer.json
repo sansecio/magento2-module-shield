@@ -1,0 +1,16 @@
+{
+  "name": "sansec/magento2-module-shield",
+  "type": "magento2-module",
+  "require": {
+    "magento/framework": "*",
+    "ext-openssl": "*"
+  },
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Sansec\\Shield\\": ""
+    }
+  }
+}
