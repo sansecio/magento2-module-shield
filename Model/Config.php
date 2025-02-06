@@ -25,7 +25,7 @@ class Config
 
     public function getLicenseKey(): string
     {
-        return $this->config->getValue(self::XML_PATH_LICENSE_KEY);
+        return $this->config->getValue(self::XML_PATH_LICENSE_KEY) ?? '';
     }
 
     public function getRulesUrl(): string

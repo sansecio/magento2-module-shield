@@ -24,15 +24,15 @@ class SyncRules extends Command
         parent::configure();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): int
+    public function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Synchronizing rules...');
         try {
             $this->rules->syncRules();
+            $output->writeln("Done!");
         } catch (\Exception $e) {
             $output->writeln($e->getMessage());
         }
-        $output->writeln("Done!");
         return 0;
     }
 }

@@ -6,7 +6,7 @@ use Magento\Framework\Logger\Handler\Base;
 
 class Handler extends Base
 {
-    protected $loggerType = Logger::INFO;
+    protected $loggerType = \Monolog\Logger::INFO;
 
     protected $fileName = '/var/log/sansec_shield.log';
 }

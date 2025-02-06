@@ -32,7 +32,6 @@ class Rules
         if (empty($rules)) {
             return [];
         }
-
         try {
             $rules = $this->serializer->unserialize($rules);
         } catch (\InvalidArgumentException $exception) {
@@ -54,13 +53,13 @@ class Rules
         if ($curl->getStatus() !== 200) {
             throw new \RuntimeException("Invalid status code {$curl->getStatus()}");
         }
-        var_dump($curl->getBody());
+        // var_dump($curl->getBody());
 
         // download rules
         // use public key to verify signature
         // save to cache
 
-        $rules = 'shield';
+        $rules = ['rules' => 'a'];
         $this->cache->save(
             $this->serializer->serialize($rules),
             CacheType::TYPE_IDENTIFIER,

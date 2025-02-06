@@ -30,9 +30,9 @@ class Shield implements ObserverInterface
         $this->logger->info("Shield is enabled");
 
         $rules = $this->rules->getRules();
-        var_dump($rules);
+        // var_dump($rules);
 
         $request = $observer->getEvent()->getRequest();
-        var_dump($request);
+        // var_dump($request);
     }
 }
