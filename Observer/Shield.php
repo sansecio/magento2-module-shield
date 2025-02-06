@@ -33,6 +33,8 @@ class Shield implements ObserverInterface
         // var_dump($rules);
 
         $request = $observer->getEvent()->getRequest();
-        // var_dump($request);
+        var_dump('aaaa');
+        var_dump($request->getContent());
+        die('abc');
     }
 }

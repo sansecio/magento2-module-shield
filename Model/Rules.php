@@ -59,9 +59,56 @@ class Rules
         // use public key to verify signature
         // save to cache
 
-        $rules = ['rules' => 'a'];
+        $rules = <<<EOF
+        [
+            {
+                "action": "block",
+                "conditions": [
+                    {
+                        "target": "req.body",
+                        "type": "regex",
+                        "pattern": "<!DOCTYPE.*?<!ENTITY.*?SYSTEM",
+                        "preprocess": [
+                            "urldecode"
+                        ]
+                    }
+                ]
+            },
+            {
+                "action": "block",
+                "conditions": [
+                    {
+                        "target": "req.body",
+                        "type": "contains",
+                        "pattern": "addafterfiltercallback",
+                        "preprocess": [
+                            "urldecode",
+                            "urldecode",
+                            "strip_non_alpha"
+                        ]
+                    }
+                ]
+            },
+            {
+                "action": "report",
+                "conditions": [
+                    {
+                        "target": "req.path",
+                        "type": "contains",
+                        "pattern": "cmsBlock"
+                    },
+                    {
+                        "target": "req.method",
+                        "type": "is",
+                        "value": "PUT"
+                    }
+                ]
+            }
+        ]
+EOF;
+
         $this->cache->save(
-            $this->serializer->serialize($rules),
+            $rules,
             CacheType::TYPE_IDENTIFIER,
             [CacheType::CACHE_TAG],
             3600
