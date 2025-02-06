@@ -5,7 +5,8 @@
         <sansec_shield>
             <general>
                 <enabled>1</enabled>
-                <rules_url>https://api.sansec.io/shield/rules</rules_url>
+                <rules_url>https://shield.sansec.io/v1/shield/rules</rules_url>
+                <report_url>https://shield.sansec.io/v1/shield/report</report_url>
             </general>
         </sansec_shield>
     </default>
