@@ -50,6 +50,7 @@ class ShieldPlugin
 
         foreach ($matchedRules as $rule) {
             if ($rule->action === 'block') {
+                $this->logger->info('Blocked request', ['rule' => $rule]);
                 http_response_code(403);
                 exit();
             }
