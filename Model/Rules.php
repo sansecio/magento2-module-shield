@@ -36,7 +36,7 @@ class Rules
         SerializerInterface $serializer,
         CurlFactory $curlFactory,
         ModuleDirReader $moduleDirReader,
-        RuleFactory $ruleFactory,
+        RuleFactory $ruleFactory
     ) {
         $this->config = $config;
         $this->cache = $cache;
@@ -78,7 +78,7 @@ class Rules
         return $data;
     }
 
-    private function getPublicKey(): \OpenSSLAsymmetricKey
+    private function getPublicKey()
     {
         $etcDir = $this->moduleDirReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Sansec_Shield');
         $publicKeyPath = $etcDir . DIRECTORY_SEPARATOR . 'public_key.pem';

@@ -15,16 +15,18 @@ class Waf
     private $rules;
 
     /** @var array<string, string> */
-    private array $ips;
+    private $ips;
 
     /** @var array<string, string> */
-    private array $networks;
+    private $networks;
 
     public function __construct(Rules $rules, RuleFactory $ruleFactory)
     {
         $this->ruleFactory = $ruleFactory;
         $config = $rules->loadRules();
-        $this->rules = array_map(fn(array $r): Rule => $ruleFactory->create(['data' => $r]), $config['rules'] ?? []);
+        $this->rules = array_map(function(array $r) use ($ruleFactory) {
+            return $ruleFactory->create(['data' => $r]);
+        }, $config['rules'] ?? []);
         $this->ips = $config['sources']['ips'] ?? [];
         $this->networks = $config['sources']['networks'] ?? [];
     }
@@ -114,7 +116,9 @@ class Waf
 
         return array_values(array_filter(
             $this->rules,
-            fn($rule) => $rule->matches($request)
+            function(Rule $rule) use ($request) {
+                return $rule->matches($request);
+            }
         ));
     }
 }

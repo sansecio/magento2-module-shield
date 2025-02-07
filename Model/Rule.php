@@ -11,12 +11,14 @@ class Rule
     public $action;
 
     /** @var Condition[] */
-    public array $conditions = [];
+    public $conditions = [];
 
     public function __construct(ConditionFactory $conditionFactory, array $data)
     {
         $this->action = $data['action'];
-        $this->conditions = array_map(fn($c) => $conditionFactory->create(['data' => $c]), $data['conditions'] ?? []);
+        $this->conditions = array_map(function ($c) use ($conditionFactory) {
+            return $conditionFactory->create(['data' => $c]);
+        }, $data['conditions'] ?? []);
     }
 
     private function extractTargetValue(string $target, RequestInterface $request): string
@@ -54,12 +56,18 @@ class Rule
                 }
             }
 
-            $matches = match ($condition->type) {
-                'regex' => (bool)preg_match('/' . str_replace('/', '\/', $condition->value) . '/i', $value),
-                'contains' => stripos($value, $condition->value) !== false,
-                'equals' => strcasecmp($value, $condition->value) === 0,
-                default => false
-            };
+            $matches = false;
+            switch ($condition->type) {
+                case 'regex':
+                    $matches = (bool)preg_match('/' . str_replace('/', '\/', $condition->value) . '/i', $value);
+                    break;
+                case 'contains':
+                    $matches = stripos($value, $condition->value) !== false;
+                    break;
+                case 'equals':
+                    $matches = strcasecmp($value, $condition->value) === 0;
+                    break;
+            }
 
             if (!$matches) {
                 return false;
