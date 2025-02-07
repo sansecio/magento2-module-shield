@@ -4,8 +4,10 @@ namespace Sansec\Shield\Model;
 
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\HTTP\Client\CurlFactory;
+use Magento\Framework\Module\Dir;
 use Magento\Framework\Serialize\SerializerInterface;
 use Sansec\Shield\Model\Cache\Type\CacheType;
+use Magento\Framework\Module\Dir\Reader as ModuleDirReader;
 
 class Rules
 {
@@ -13,17 +15,20 @@ class Rules
     private CacheInterface $cache;
     private SerializerInterface $serializer;
     private CurlFactory $curlFactory;
+    private ModuleDirReader $moduleDirReader;
 
     public function __construct(
         Config $config,
         CacheInterface $cache,
         SerializerInterface $serializer,
-        CurlFactory $curlFactory
+        CurlFactory $curlFactory,
+        ModuleDirReader $moduleDirReader
     ) {
         $this->config = $config;
         $this->cache = $cache;
         $this->serializer = $serializer;
         $this->curlFactory = $curlFactory;
+        $this->moduleDirReader = $moduleDirReader;
     }
 
     public function getRules(): array
@@ -40,12 +45,8 @@ class Rules
         return $rules;
     }
 
-    public function syncRules(): void
+    private function fetchRules(): array
     {
-        if (!$this->config->isEnabled()) {
-            return;
-        }
-
         $curl = $this->curlFactory->create();
         $curl->setCredentials($this->config->getLicenseKey(), $this->config->getLicenseKey());
         $curl->get($this->config->getRulesUrl());
@@ -53,65 +54,72 @@ class Rules
         if ($curl->getStatus() !== 200) {
             throw new \RuntimeException("Invalid status code {$curl->getStatus()}");
         }
-        // var_dump($curl->getBody());
 
-        // download rules
-        // use public key to verify signature
-        // save to cache
+        $data = $this->serializer->unserialize($curl->getBody());
+        if (!isset($data['rules']) || !isset($data['signature'])) {
+            throw new \RuntimeException("Invalid response format: missing rules or signature");
+        }
 
-        $rules = <<<EOF
-        [
-            {
-                "action": "block",
-                "conditions": [
-                    {
-                        "target": "req.body",
-                        "type": "regex",
-                        "pattern": "<!DOCTYPE.*?<!ENTITY.*?SYSTEM",
-                        "preprocess": [
-                            "urldecode"
-                        ]
-                    }
-                ]
-            },
-            {
-                "action": "block",
-                "conditions": [
-                    {
-                        "target": "req.body",
-                        "type": "contains",
-                        "pattern": "addafterfiltercallback",
-                        "preprocess": [
-                            "urldecode",
-                            "urldecode",
-                            "strip_non_alpha"
-                        ]
-                    }
-                ]
-            },
-            {
-                "action": "report",
-                "conditions": [
-                    {
-                        "target": "req.path",
-                        "type": "contains",
-                        "pattern": "cmsBlock"
-                    },
-                    {
-                        "target": "req.method",
-                        "type": "is",
-                        "value": "PUT"
-                    }
-                ]
-            }
-        ]
-EOF;
+        return $data;
+    }
 
-        $this->cache->save(
-            $rules,
-            CacheType::TYPE_IDENTIFIER,
-            [CacheType::CACHE_TAG],
-            3600
-        );
+    private function getPublicKey(): \OpenSSLAsymmetricKey
+    {
+        $etcDir = $this->moduleDirReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Sansec_Shield');
+        $publicKeyPath = $etcDir . DIRECTORY_SEPARATOR . 'public_key.pem';
+        if (!file_exists($publicKeyPath)) {
+            throw new \RuntimeException("Public key not found");
+        }
+
+        $publicKey = file_get_contents($publicKeyPath);
+        if ($publicKey === false) {
+            throw new \RuntimeException("Failed to read public key file: " . $publicKeyFile);
+        }
+
+        $pubkeyid = openssl_pkey_get_public($publicKey);
+        if ($pubkeyid === false) {
+            throw new \RuntimeException("Failed to extract public key: " . openssl_error_string());
+        }
+        return $pubkeyid;
+    }
+
+    private function verifySignature(string $rulesData, string $signature): bool
+    {
+        $result = openssl_verify($rulesData, $signature, $this->getPublicKey(), OPENSSL_ALGO_SHA256);
+        if ($result === 1) {
+            return true;
+        } elseif ($result === 0) {
+            return false;
+        } else {
+            throw new \RuntimeException("Signature verification error: " . openssl_error_string());
+        }
+    }
+
+    public function syncRules(): void
+    {
+        if (!$this->config->isEnabled()) {
+            return;
+        }
+
+        $data = $this->fetchRules();
+
+        $rulesData = base64_decode($data['rules'], true);
+        if ($rulesData === false) {
+            throw new Exception("Failed to decode base64 rules data");
+        }
+
+        $signature = base64_decode($data['signature'], true);
+        if ($signature === false) {
+            throw new Exception("Failed to decode base64 signature");
+        }
+
+        if ($this->verifySignature($rulesData, $signature)) {
+            $this->cache->save(
+                $rulesData,
+                CacheType::TYPE_IDENTIFIER,
+                [CacheType::CACHE_TAG],
+                3600
+            );
+        }
     }
 }
