@@ -38,15 +38,16 @@ class Rules
     public function loadRules(): array
     {
         $rulesData = $this->cache->load(CacheType::TYPE_IDENTIFIER);
-        if (empty($rules)) {
+        if (empty($rulesData)) {
             return [];
         }
         try {
-            $rules = [];
-            foreach ($this->serializer->unserialize($rulesData) as $ruleData) {
-                $rules[] = $this->ruleFactory->create(['data' => $ruleData]);
+            $rules = $this->serializer->unserialize($rulesData);
+            $processedRules = [];
+            foreach ($rules['rules'] as $ruleData) {
+                $processedRules[] = $this->ruleFactory->create(['data' => $ruleData]);
             }
-            return $rules;
+            return $processedRules;
         } catch (\InvalidArgumentException $exception) {
             $this->cache->remove(CacheType::TYPE_IDENTIFIER);
         }

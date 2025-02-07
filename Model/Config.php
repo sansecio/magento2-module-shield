@@ -9,6 +9,7 @@ class Config
     private const XML_PATH_ENABLED = 'sansec_shield/general/enabled';
     private const XML_PATH_LICENSE_KEY = 'sansec_shield/general/license_key';
     private const XML_PATH_RULES_URL = 'sansec_shield/general/rules_url';
+    private const XML_PATH_REPORT_ENABLED = 'sansec_shield/general/report_enabled';
     private const XML_PATH_REPORT_URL = 'sansec_shield/general/report_url';
 
     private ScopeConfigInterface $config;
@@ -21,6 +22,11 @@ class Config
     public function isEnabled(): bool
     {
         return (bool) $this->config->getValue(self::XML_PATH_ENABLED);
+    }
+
+    public function isReportEnabled(): bool
+    {
+        return (bool) $this->config->getValue(self::XML_PATH_REPORT_ENABLED);
     }
 
     public function getLicenseKey(): string

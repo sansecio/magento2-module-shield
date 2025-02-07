@@ -9,9 +9,19 @@ class Waf
     /** @var Rule[] */
     private $rules;
 
-    public function __construct(array $rules)
-    {
+    /** @var array<string, string> */
+    private array $ips;
+
+    /** @var array<string, string> */
+    private array $networks;
+
+    public function __construct(
+        array $rules,
+        array $sources = []
+    ) {
         $this->rules = $rules;
+        $this->ips = $sources['ip'] ?? [];
+        $this->networks = $sources['networks'] ?? [];
     }
 
     public function matchRequest(RequestInterface $request): array
