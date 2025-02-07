@@ -32,8 +32,8 @@ class Rule
                 return $request->getRequestUri();
             case 'method':
                 return $request->getMethod();
-            // case 'header':
-            //    return count($parts) === 3 ? ($request['headers'][strtolower($parts[2])] ?? '') : '';
+            case 'header':
+                return count($parts) === 3 ? $request->getHeader($parts[2], '') : '';
             default:
                 return '';
         }

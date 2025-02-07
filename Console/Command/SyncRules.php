@@ -29,7 +29,7 @@ class SyncRules extends Command
         $output->writeln('Synchronizing rules...');
         try {
             $rules = $this->rules->syncRules();
-            $output->writeln(sprintf("Finished synchronization of %d rules.", count($rules)));
+            $output->writeln(sprintf("Finished synchronization of %d rules.", count($rules['rules'])));
         } catch (\Exception $e) {
             $output->writeln($e->getMessage());
         }

@@ -21,7 +21,7 @@ class SyncRules
         try {
             $this->rules->syncRules();
         } catch (\Exception $e) {
-            $this->logger->error($e->getMessage());
+            $this->logger->error(sprintf("Failed synchronizing rules: %s", $e->getMessage()));
         }
     }
 }
