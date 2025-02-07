@@ -61,7 +61,7 @@ class Rule
             $matches = false;
             switch ($condition->type) {
                 case 'regex':
-                    $matches = (bool)preg_match('/' . str_replace('/', '\/', $condition->value) . '/i', $value);
+                    $matches = (bool)preg_match('/' . str_replace('/', '\/', $condition->value) . '/', $value);
                     break;
                 case 'contains':
                     $matches = stripos($value, $condition->value) !== false;
