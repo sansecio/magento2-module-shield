@@ -25,7 +25,8 @@ class ShieldPlugin
     /** @var Report */
     private $report;
 
-    public function __construct(Config $config, Logger $logger, Waf $waf, Report $report) {
+    public function __construct(Config $config, Logger $logger, Waf $waf, Report $report)
+    {
         $this->config = $config;
         $this->logger = $logger;
         $this->waf = $waf;
