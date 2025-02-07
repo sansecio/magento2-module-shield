@@ -9,7 +9,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SyncRules extends Command
 {
-    private Rules $rules;
+    /** @var Rules */
+    private $rules;
 
     public function __construct(Rules $rules, ?string $name = null)
     {

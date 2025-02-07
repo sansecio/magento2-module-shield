@@ -8,8 +8,8 @@ use Sansec\Shield\Model\RuleFactory;
 
 class Waf
 {
-    private RuleFactory $ruleFactory;
-    private RemoteAddress $remoteAddress;
+    /** @var RuleFactory */
+    private $ruleFactory;
 
     /** @var Rule[] */
     private $rules;
@@ -20,14 +20,9 @@ class Waf
     /** @var array<string, string> */
     private array $networks;
 
-    public function __construct(
-        Rules $rules,
-        RuleFactory $ruleFactory,
-        RemoteAddress $remoteAddress,
-    ) {
+    public function __construct(Rules $rules, RuleFactory $ruleFactory)
+    {
         $this->ruleFactory = $ruleFactory;
-        $this->remoteAddress = $remoteAddress;
-
         $config = $rules->loadRules();
         $this->rules = array_map(fn(array $r): Rule => $ruleFactory->create(['data' => $r]), $config['rules'] ?? []);
         $this->ips = $config['sources']['ips'] ?? [];

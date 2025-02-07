@@ -10,11 +10,20 @@ use Sansec\Shield\Logger\Logger;
 
 class Report
 {
-    private Config $config;
-    private CurlFactory $curlFactory;
-    private Logger $logger;
-    private SerializerInterface $serializer;
-    private RemoteAddress $remoteAddress;
+    /** @var Config  */
+    private $config;
+
+    /** @var CurlFactory */
+    private $curlFactory;
+
+    /** @var Logger */
+    private $logger;
+
+    /** @var SerializerInterface */
+    private $serializer;
+
+    /** @var RemoteAddress  */
+    private $remoteAddress;
 
     public function __construct(
         Config $config,

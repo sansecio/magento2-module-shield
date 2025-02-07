@@ -12,7 +12,8 @@ class Config
     private const XML_PATH_REPORT_ENABLED = 'sansec_shield/general/report_enabled';
     private const XML_PATH_REPORT_URL = 'sansec_shield/general/report_url';
 
-    private ScopeConfigInterface $config;
+    /** @var ScopeConfigInterface */
+    private $config;
 
     public function __construct(ScopeConfigInterface $config)
     {

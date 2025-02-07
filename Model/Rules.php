@@ -12,12 +12,23 @@ use Sansec\Shield\Model\RuleFactory as RuleFactory;
 
 class Rules
 {
-    private Config $config;
-    private CacheInterface $cache;
-    private SerializerInterface $serializer;
-    private CurlFactory $curlFactory;
-    private ModuleDirReader $moduleDirReader;
-    private RuleFactory $ruleFactory;
+    /** @var Config */
+    private $config;
+
+    /** @var CacheInterface */
+    private $cache;
+
+    /** @var SerializerInterface */
+    private $serializer;
+
+    /** @var CurlFactory */
+    private $curlFactory;
+
+    /** @var ModuleDirReader */
+    private $moduleDirReader;
+
+    /** @var RuleFactory  */
+    private $ruleFactory;
 
     public function __construct(
         Config $config,

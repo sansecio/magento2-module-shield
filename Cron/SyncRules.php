@@ -7,8 +7,11 @@ use Sansec\Shield\Model\Rules;
 
 class SyncRules
 {
-    private Rules $rules;
-    private Logger $logger;
+    /** @var Rules */
+    private $rules;
+
+    /** @var Logger */
+    private $logger;
 
     public function __construct(Rules $rules, Logger $logger)
     {

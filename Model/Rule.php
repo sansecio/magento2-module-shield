@@ -7,7 +7,8 @@ use Sansec\Shield\Model\ConditionFactory;
 
 class Rule
 {
-    public string $action;
+    /** @var string */
+    public $action;
 
     /** @var Condition[] */
     public array $conditions = [];

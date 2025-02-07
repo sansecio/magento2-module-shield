@@ -13,10 +13,17 @@ use Sansec\Shield\Model\Waf;
 
 class ShieldPlugin
 {
-    private Config $config;
-    private Logger $logger;
-    private Waf $waf;
-    private Report $report;
+    /** @var Config */
+    private $config;
+
+    /** @var Logger */
+    private $logger;
+
+    /** @var Waf */
+    private $waf;
+
+    /** @var Report */
+    private $report;
 
     public function __construct(
         Config $config,

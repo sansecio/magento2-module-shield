@@ -4,10 +4,17 @@ namespace Sansec\Shield\Model;
 
 class Condition
 {
-    public string $target;
-    public string $type;
-    public string $value;
-    public array $preprocess = [];
+    /** @var string */
+    public $target;
+
+    /** @var string */
+    public $type;
+
+    /** @var string */
+    public $value;
+
+    /** @var array */
+    public $preprocess = [];
 
     public function __construct(array $data)
     {
