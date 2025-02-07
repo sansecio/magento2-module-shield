@@ -9,4 +9,10 @@ bin/magento bin/magento config:set sansec_shield/general/license_key <your licen
 bin/magento cache:clean
 ```
 
-Alternatively, you can configure your license key via System -> Configuration -> Security -> Sansec Shield.
+You can also configure your license key via System -> Configuration -> Security -> Sansec Shield.
+
+Rules are downloaded asynchronously via cron. If you want immediate protection, execute the following command:
+
+```bash
+bin/magento sansec:shield:sync-rules
+```
