@@ -2,6 +2,7 @@
   "name": "sansec/magento2-module-shield",
   "type": "magento2-module",
   "require": {
+    "php": ">=7.2",
     "magento/framework": "*",
     "ext-openssl": "*"
   },
