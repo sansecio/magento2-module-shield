@@ -1,6 +1,6 @@
 # Sansec Shield
 
-Requires Magento 2.4+ and PHP 7.2+
+Requires Magento 2.3+ and PHP 7.2+
 
 ## Installation
 
