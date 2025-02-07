@@ -6,6 +6,8 @@
             <general>
                 <enabled>1</enabled>
                 <rules_url>https://shield.sansec.io/v1/shield/rules</rules_url>
+
+                <report_enabled>1</report_enabled>
                 <report_url>https://shield.sansec.io/v1/shield/report</report_url>
             </general>
         </sansec_shield>

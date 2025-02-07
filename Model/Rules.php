@@ -8,6 +8,7 @@ use Magento\Framework\Module\Dir;
 use Magento\Framework\Serialize\SerializerInterface;
 use Sansec\Shield\Model\Cache\Type\CacheType;
 use Magento\Framework\Module\Dir\Reader as ModuleDirReader;
+use Sansec\Shield\Model\RuleFactory as RuleFactory;
 
 class Rules
 {
@@ -16,34 +17,40 @@ class Rules
     private SerializerInterface $serializer;
     private CurlFactory $curlFactory;
     private ModuleDirReader $moduleDirReader;
+    private RuleFactory $ruleFactory;
 
     public function __construct(
         Config $config,
         CacheInterface $cache,
         SerializerInterface $serializer,
         CurlFactory $curlFactory,
-        ModuleDirReader $moduleDirReader
+        ModuleDirReader $moduleDirReader,
+        RuleFactory $ruleFactory,
     ) {
         $this->config = $config;
         $this->cache = $cache;
         $this->serializer = $serializer;
         $this->curlFactory = $curlFactory;
         $this->moduleDirReader = $moduleDirReader;
+        $this->ruleFactory = $ruleFactory;
     }
 
-    public function getRules(): array
+    public function loadRules(): array
     {
-        $rules = $this->cache->load(CacheType::TYPE_IDENTIFIER);
+        $rulesData = $this->cache->load(CacheType::TYPE_IDENTIFIER);
         if (empty($rules)) {
             return [];
         }
         try {
-            $rules = $this->serializer->unserialize($rules);
+            $rules = [];
+            foreach ($this->serializer->unserialize($rulesData) as $ruleData) {
+                $rules[] = $this->ruleFactory->create(['data' => $ruleData]);
+            }
+            return $rules;
         } catch (\InvalidArgumentException $exception) {
             $this->cache->remove(CacheType::TYPE_IDENTIFIER);
-            return [];
         }
-        return $rules;
+        return [];
     }
 
     private function fetchRules(): array

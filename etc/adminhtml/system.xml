@@ -9,11 +9,16 @@
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>General</label>
                 <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Enable</label>
+                    <label>Enable Shield</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="license_key" translate="label" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>License Key</label>
+                </field>
+                <field id="report_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Reporting</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>When this is enabled, blocked requests are reported to the eComscan dashboard.</comment>
                 </field>
             </group>
         </section>
