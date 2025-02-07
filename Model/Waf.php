@@ -28,7 +28,7 @@ class Waf
     ) {
         $this->ruleFactory = $ruleFactory;
         $this->remoteAddress = $remoteAddress;
-        $this->rules = array_map(fn(array $r): Rule => $ruleFactory->create(['data' => $r]), $config['rules']);
+        $this->rules = array_map(fn(array $r): Rule => $ruleFactory->create(['data' => $r]), $config['rules'] ?? []);
         $this->ips = $config['sources']['ips'] ?? [];
         $this->networks = $config['sources']['networks'] ?? [];
     }
