@@ -29,8 +29,6 @@ class ShieldPlugin
             return [$request];
         }
 
-        $this->logger->info("Shield is enabled");
-
         $rules = $this->rules->getRules();
         // var_dump($rules);
 

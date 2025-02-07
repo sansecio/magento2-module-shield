@@ -106,12 +106,12 @@ class Rules
 
         $rulesData = base64_decode($data['rules'], true);
         if ($rulesData === false) {
-            throw new Exception("Failed to decode base64 rules data");
+            throw new \RuntimeException("Failed to decode base64 rules data");
         }
 
         $signature = base64_decode($data['signature'], true);
         if ($signature === false) {
-            throw new Exception("Failed to decode base64 signature");
+            throw new \RuntimeException("Failed to decode base64 signature");
         }
 
         if ($this->verifySignature($rulesData, $signature)) {
