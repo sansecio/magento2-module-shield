@@ -21,4 +21,7 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\App\FrontControllerInterface">
+        <plugin name="sansec_shield" type="Sansec\Shield\Plugin\ShieldPlugin"/>
+    </type>
 </config>
