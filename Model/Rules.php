@@ -42,12 +42,7 @@ class Rules
             return [];
         }
         try {
-            $rules = $this->serializer->unserialize($rulesData);
-            $processedRules = [];
-            foreach ($rules['rules'] as $ruleData) {
-                $processedRules[] = $this->ruleFactory->create(['data' => $ruleData]);
-            }
-            return $processedRules;
+            return $this->serializer->unserialize($rulesData);
         } catch (\InvalidArgumentException $exception) {
             $this->cache->remove(CacheType::TYPE_IDENTIFIER);
         }

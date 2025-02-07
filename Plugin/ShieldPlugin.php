@@ -39,7 +39,7 @@ class ShieldPlugin
             return [$request];
         }
 
-        $waf = $this->wafFactory->create(['rules' => $this->rules->loadRules()]);
+        $waf = $this->wafFactory->create(['config' => $this->rules->loadRules()]);
         $matchedRules = $waf->matchRequest($request);
         if (empty($matchedRules)) {
             return [$request];
