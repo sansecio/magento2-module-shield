@@ -50,13 +50,13 @@ class Waf
                 foreach ($ips as $ip) {
                     $ip = trim($ip);
                     if ($ip !== '' && !$this->isPrivateIP($ip)) {
-                        $requestIPs[$ip] = true;
+                        $requestIPs[] = $ip;
                     }
                 }
             }
         }
 
-        return $requestIPs;
+        return array_unique($requestIPs);
     }
 
     private function isPrivateIP(string $ip): bool
