@@ -96,10 +96,10 @@ class Rules
         }
     }
 
-    public function syncRules(): void
+    public function syncRules(): array
     {
         if (!$this->config->isEnabled()) {
-            return;
+            return [];
         }
 
         $data = $this->fetchRules();
@@ -121,6 +121,8 @@ class Rules
                 [CacheType::CACHE_TAG],
                 3600
             );
+            return $this->serializer->unserialize($rulesData);
         }
+        return [];
     }
 }
