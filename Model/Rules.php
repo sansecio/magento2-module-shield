@@ -40,6 +40,7 @@ class Rules
         try {
             $rules = $this->serializer->unserialize($rules);
         } catch (\InvalidArgumentException $exception) {
+            $this->cache->remove(CacheType::TYPE_IDENTIFIER);
             return [];
         }
         return $rules;
