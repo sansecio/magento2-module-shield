@@ -41,8 +41,6 @@ class Rule
 
     public function matches(RequestInterface $request): bool
     {
-        $matched = true;
-
         foreach ($this->conditions as $condition) {
             $value = $this->extractTargetValue($condition->target, $request);
 
@@ -63,11 +61,10 @@ class Rule
             };
 
             if (!$matches) {
-                $matched = false;
-                break;
+                return false;
             }
         }
 
-        return $matched;
+        return true;
     }
 }
