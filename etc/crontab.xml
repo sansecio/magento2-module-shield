@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
     <group id="default">
         <job name="sansec_shield_sync_rules" instance="Sansec\Shield\Cron\SyncRules" method="execute">
-            <schedule>0 * * * *</schedule>
+            <schedule>*/5 * * * *</schedule>
         </job>
     </group>
 </config>
