@@ -16,11 +16,11 @@ class Condition
     /** @var array */
     public $preprocess = [];
 
-    public function __construct(array $data)
+    public function __construct(string $target, string $type, string $value, array $preprocess = [])
     {
-        $this->target = $data['target'];
-        $this->type = $data['type'];
-        $this->value = $data['value'];
-        $this->preprocess = $data['preprocess'] ?? [];
+        $this->target = $target;
+        $this->type = $type;
+        $this->value = $value;
+        $this->preprocess = $preprocess;
     }
 }

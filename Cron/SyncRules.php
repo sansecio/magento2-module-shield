@@ -22,7 +22,8 @@ class SyncRules
     public function execute(): void
     {
         try {
-            $this->rules->syncRules();
+            $rules = $this->rules->syncRules();
+            $this->logger->info(sprintf("Finished synchronization of %d rules.", count($rules['rules'])));
         } catch (\Exception $e) {
             $this->logger->error(sprintf("Failed synchronizing rules: %s", $e->getMessage()));
         }

@@ -132,8 +132,7 @@ class Rules
             $this->cache->save(
                 $rulesData,
                 CacheType::TYPE_IDENTIFIER,
-                [CacheType::CACHE_TAG],
-                3600
+                [CacheType::CACHE_TAG]
             );
             return $this->serializer->unserialize($rulesData);
         }

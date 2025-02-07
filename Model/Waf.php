@@ -24,8 +24,8 @@ class Waf
     {
         $this->ruleFactory = $ruleFactory;
         $config = $rules->loadRules();
-        $this->rules = array_map(function(array $r) use ($ruleFactory) {
-            return $ruleFactory->create(['data' => $r]);
+        $this->rules = array_map(function($rule) use ($ruleFactory) {
+            return $ruleFactory->create($rule);
         }, $config['rules'] ?? []);
         $this->ips = $config['sources']['ips'] ?? [];
         $this->networks = $config['sources']['networks'] ?? [];
@@ -97,11 +97,11 @@ class Waf
         foreach ($this->collectIPs() as $ip) {
             foreach ($this->networks as $cidr => $action) {
                 if ($this->ipMatchesCidr($ip, $cidr)) {
-                    return $this->ruleFactory->create(['data' => ['action' => $action]]);
+                    return $this->ruleFactory->create(['action' => $action]);
                 }
             }
             if (isset($this->ips[$ip])) {
-                return $this->ruleFactory->create(['data' => ['action' => $action]]);
+                return $this->ruleFactory->create(['action' => $action]);
             }
         }
         return null;

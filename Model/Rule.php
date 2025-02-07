@@ -13,12 +13,12 @@ class Rule
     /** @var Condition[] */
     public $conditions = [];
 
-    public function __construct(ConditionFactory $conditionFactory, array $data)
+    public function __construct(ConditionFactory $conditionFactory, string $action, array $conditions = [])
     {
-        $this->action = $data['action'];
-        $this->conditions = array_map(function ($c) use ($conditionFactory) {
-            return $conditionFactory->create(['data' => $c]);
-        }, $data['conditions'] ?? []);
+        $this->action = $action;
+        $this->conditions = array_map(function ($condition) use ($conditionFactory) {
+            return $conditionFactory->create($condition);
+        }, $conditions);
     }
 
     private function extractTargetValue(string $target, RequestInterface $request): string

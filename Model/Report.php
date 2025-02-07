@@ -58,7 +58,7 @@ class Report
                     'path' => $request->getRequestUri(),
                     'body' => $request->getContent(),
                     'ip' => $this->remoteAddress->getRemoteAddress(),
-                    'headers' => $request->getHeaders(),
+                    'headers' => $request->getHeaders()->toArray(),
                 ]
             ]);
             $curl->post($this->config->getReportUrl(), $data);
