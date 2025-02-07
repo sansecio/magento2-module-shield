@@ -9,27 +9,24 @@ use Sansec\Shield\Logger\Logger;
 use Sansec\Shield\Model\Config;
 use Sansec\Shield\Model\Report;
 use Sansec\Shield\Model\Rules;
-use Sansec\Shield\Model\WafFactory;
+use Sansec\Shield\Model\Waf;
 
 class ShieldPlugin
 {
     private Config $config;
-    private Rules $rules;
     private Logger $logger;
-    private WafFactory $wafFactory;
+    private Waf $waf;
     private Report $report;
 
     public function __construct(
         Config $config,
-        Rules $rules,
         Logger $logger,
-        WafFactory $wafFactory,
+        Waf $waf,
         Report $report
     ) {
         $this->config = $config;
-        $this->rules = $rules;
         $this->logger = $logger;
-        $this->wafFactory = $wafFactory;
+        $this->waf = $waf;
         $this->report = $report;
     }
 
@@ -39,8 +36,7 @@ class ShieldPlugin
             return [$request];
         }
 
-        $waf = $this->wafFactory->create(['config' => $this->rules->loadRules()]);
-        $matchedRules = $waf->matchRequest($request);
+        $matchedRules = $this->waf->matchRequest($request);
         if (empty($matchedRules)) {
             return [$request];
         }
