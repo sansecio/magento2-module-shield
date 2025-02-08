@@ -3,7 +3,6 @@
 namespace Sansec\Shield\Model;
 
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Sansec\Shield\Model\RuleFactory;
 
 class Waf
