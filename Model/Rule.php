@@ -13,15 +13,22 @@ class Rule
     /** @var Condition[] */
     public $conditions = [];
 
-    public function __construct(ConditionFactory $conditionFactory, string $action, array $conditions = [])
-    {
+    /** @var IP */
+    private $ip;
+
+    public function __construct(
+        ConditionFactory $conditionFactory,
+        IP $ip,
+        string $action,
+        array $conditions = []
+    ) {
         $this->action = $action;
         $this->conditions = array_map(function ($condition) use ($conditionFactory) {
             return $conditionFactory->create($condition);
         }, $conditions);
     }
 
-    private function extractTargetValue(string $target, RequestInterface $request): string
+    private function extractTargetValue(string $target, RequestInterface $request): mixed
     {
         $parts = explode('.', $target);
         if ($parts[0] !== 'req') {
@@ -37,6 +44,8 @@ class Rule
                 return $request->getMethod();
             case 'header':
                 return count($parts) === 3 ? $request->getHeader($parts[2], '') : '';
+            case 'ip':
+                return $this->ip->collectRequestIPs();
             default:
                 return '';
         }
@@ -71,6 +80,17 @@ class Rule
                     break;
                 case 'equals':
                     $matches = strcmp($value, $condition->value) === 0;
+                    break;
+                case 'ip':
+                    $matches = in_array($condition->value, $value);
+                    break;
+                case 'network':
+                    foreach ($value as $ip) {
+                        if ($this->ip->ipMatchesCidr($ip, $condition->value)) {
+                            $matches = true;
+                            break;
+                        }
+                    }
                     break;
             }
 

@@ -22,21 +22,21 @@ class Report
     /** @var SerializerInterface */
     private $serializer;
 
-    /** @var RemoteAddress  */
-    private $remoteAddress;
+    /** @var IP */
+    private $ip;
 
     public function __construct(
         Config $config,
         CurlFactory $curlFactory,
         Logger $logger,
         SerializerInterface $serializer,
-        RemoteAddress $remoteAddress
+        IP $ip
     ) {
         $this->config = $config;
         $this->curlFactory = $curlFactory;
         $this->logger = $logger;
         $this->serializer = $serializer;
-        $this->remoteAddress = $remoteAddress;
+        $this->ip = $ip;
     }
 
     public function sendReport(RequestInterface $request, array $rules)
@@ -57,7 +57,7 @@ class Report
                     'method' => $request->getMethod(),
                     'path' => $request->getRequestUri(),
                     'body' => $request->getContent(),
-                    'ip' => $this->remoteAddress->getRemoteAddress(),
+                    'ips' => $this->ip->collectRequestIPs(),
                     'headers' => $request->getHeaders()->toArray(),
                 ]
             ]);
