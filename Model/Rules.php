@@ -8,7 +8,6 @@ use Magento\Framework\Module\Dir;
 use Magento\Framework\Serialize\SerializerInterface;
 use Sansec\Shield\Model\Cache\Type\CacheType;
 use Magento\Framework\Module\Dir\Reader as ModuleDirReader;
-use Sansec\Shield\Model\RuleFactory as RuleFactory;
 
 class Rules
 {
@@ -27,23 +26,18 @@ class Rules
     /** @var ModuleDirReader */
     private $moduleDirReader;
 
-    /** @var RuleFactory  */
-    private $ruleFactory;
-
     public function __construct(
         Config $config,
         CacheInterface $cache,
         SerializerInterface $serializer,
         CurlFactory $curlFactory,
-        ModuleDirReader $moduleDirReader,
-        RuleFactory $ruleFactory
+        ModuleDirReader $moduleDirReader
     ) {
         $this->config = $config;
         $this->cache = $cache;
         $this->serializer = $serializer;
         $this->curlFactory = $curlFactory;
         $this->moduleDirReader = $moduleDirReader;
-        $this->ruleFactory = $ruleFactory;
     }
 
     public function loadRules(): array
