@@ -51,10 +51,13 @@ class Rule
                 switch ($process) {
                     case 'urldecode':
                         $value = urldecode($value);
+                        break;
                     case 'strtolower':
                         $value = strtolower($value);
+                        break;
                     case 'strip_non_alpha':
                         $value = preg_replace('/[^a-zA-Z]/', '', $value);
+                        break;
                 }
             }
 
