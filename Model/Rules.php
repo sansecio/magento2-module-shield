@@ -88,7 +88,7 @@ class Rules
 
         $publicKey = file_get_contents($publicKeyPath);
         if ($publicKey === false) {
-            throw new \RuntimeException("Failed to read public key file: " . $publicKeyFile);
+            throw new \RuntimeException("Failed to read public key file: " . $publicKeyPath);
         }
 
         $pubkeyid = openssl_pkey_get_public($publicKey);
