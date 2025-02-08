@@ -23,6 +23,7 @@ class Rule
         array $conditions = []
     ) {
         $this->action = $action;
+        $this->ip = $ip;
         foreach ($conditions as $condition) {
             $this->conditions[] = $conditionFactory->create($condition);
         }
