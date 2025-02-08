@@ -64,7 +64,7 @@ class Rule
                     $matches = (bool)preg_match('/' . str_replace('/', '\/', $condition->value) . '/', $value);
                     break;
                 case 'contains':
-                    $matches = stripos($value, $condition->value) !== false;
+                    $matches = strpos($value, $condition->value) !== false;
                     break;
                 case 'equals':
                     $matches = strcmp($value, $condition->value) === 0;
