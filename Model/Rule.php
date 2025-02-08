@@ -51,56 +51,63 @@ class Rule
         }
     }
 
+    private function preprocessTargetValue(string $value, Condition $condition): string
+    {
+        foreach ($condition->preprocess as $process) {
+            switch ($process) {
+                case 'urldecode':
+                    $value = urldecode($value);
+                    break;
+                case 'strtolower':
+                    $value = strtolower($value);
+                    break;
+                case 'strip_non_alpha':
+                    $value = preg_replace('/[^a-zA-Z]/', '', $value);
+                    break;
+            }
+        }
+        return $value;
+    }
+
+    private function targetValueMatchesCondition(string $value, Condition $condition): bool
+    {
+        $matches = false;
+        switch ($condition->type) {
+            case 'regex':
+                $matches = (bool)preg_match('/' . str_replace('/', '\/', $condition->value) . '/', $value);
+                break;
+            case 'contains':
+                $matches = strpos($value, $condition->value) !== false;
+                break;
+            case 'equals':
+                $matches = strcmp($value, $condition->value) === 0;
+                break;
+            case 'ip':
+                $matches = in_array($condition->value, $value);
+                break;
+            case 'network':
+                foreach ($value as $ip) {
+                    if ($this->ip->ipMatchesCidr($ip, $condition->value)) {
+                        $matches = true;
+                        break;
+                    }
+                }
+                break;
+        }
+        return $matches;
+    }
+
     public function matches(RequestInterface $request): bool
     {
         foreach ($this->conditions as $condition) {
             $value = $this->extractTargetValue($condition->target, $request);
-
             if (is_string($value)) {
-                foreach ($condition->preprocess as $process) {
-                    switch ($process) {
-                        case 'urldecode':
-                            $value = urldecode($value);
-                            break;
-                        case 'strtolower':
-                            $value = strtolower($value);
-                            break;
-                        case 'strip_non_alpha':
-                            $value = preg_replace('/[^a-zA-Z]/', '', $value);
-                            break;
-                    }
-                }
+                $value = $this->preprocessTargetValue($value, $condition);
             }
-
-            $matches = false;
-            switch ($condition->type) {
-                case 'regex':
-                    $matches = (bool)preg_match('/' . str_replace('/', '\/', $condition->value) . '/', $value);
-                    break;
-                case 'contains':
-                    $matches = strpos($value, $condition->value) !== false;
-                    break;
-                case 'equals':
-                    $matches = strcmp($value, $condition->value) === 0;
-                    break;
-                case 'ip':
-                    $matches = in_array($condition->value, $value);
-                    break;
-                case 'network':
-                    foreach ($value as $ip) {
-                        if ($this->ip->ipMatchesCidr($ip, $condition->value)) {
-                            $matches = true;
-                            break;
-                        }
-                    }
-                    break;
-            }
-
-            if (!$matches) {
+            if (!$this->targetValueMatchesCondition($value, $condition)) {
                 return false;
             }
         }
-
         return true;
     }
 }
