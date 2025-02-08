@@ -67,7 +67,7 @@ class Rule
                     $matches = stripos($value, $condition->value) !== false;
                     break;
                 case 'equals':
-                    $matches = strcasecmp($value, $condition->value) === 0;
+                    $matches = strcmp($value, $condition->value) === 0;
                     break;
             }
 
