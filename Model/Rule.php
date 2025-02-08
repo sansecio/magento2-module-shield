@@ -56,17 +56,19 @@ class Rule
         foreach ($this->conditions as $condition) {
             $value = $this->extractTargetValue($condition->target, $request);
 
-            foreach ($condition->preprocess as $process) {
-                switch ($process) {
-                    case 'urldecode':
-                        $value = urldecode($value);
-                        break;
-                    case 'strtolower':
-                        $value = strtolower($value);
-                        break;
-                    case 'strip_non_alpha':
-                        $value = preg_replace('/[^a-zA-Z]/', '', $value);
-                        break;
+            if (is_string($value)) {
+                foreach ($condition->preprocess as $process) {
+                    switch ($process) {
+                        case 'urldecode':
+                            $value = urldecode($value);
+                            break;
+                        case 'strtolower':
+                            $value = strtolower($value);
+                            break;
+                        case 'strip_non_alpha':
+                            $value = preg_replace('/[^a-zA-Z]/', '', $value);
+                            break;
+                    }
                 }
             }
 
