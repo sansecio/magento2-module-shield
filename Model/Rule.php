@@ -23,9 +23,9 @@ class Rule
         array $conditions = []
     ) {
         $this->action = $action;
-        $this->conditions = array_map(function ($condition) use ($conditionFactory) {
-            return $conditionFactory->create($condition);
-        }, $conditions);
+        foreach ($conditions as $condition) {
+            $this->conditions[] = $conditionFactory->create($condition);
+        }
     }
 
     private function extractTargetValue(string $target, RequestInterface $request): mixed
