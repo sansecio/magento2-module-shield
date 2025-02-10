@@ -39,7 +39,7 @@ class Rule
         switch ($parts[1]) {
             case 'body':
                 return $request->getContent();
-            case 'path':
+            case 'uri':
                 return $request->getRequestUri();
             case 'method':
                 return $request->getMethod();
