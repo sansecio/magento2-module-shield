@@ -119,7 +119,7 @@ class Rule
     {
         foreach ($this->conditions as $condition) {
             $value = $this->extractTargetValue($condition->target, $request);
-            if (is_string($value)) {
+            if (is_string($value) && strlen($value) > 0) {
                 $value = $this->preprocessTargetValue($value, $condition);
             }
             if (!$this->targetValueMatchesCondition($value, $condition)) {
