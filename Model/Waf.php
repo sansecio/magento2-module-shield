@@ -9,7 +9,7 @@ use Sansec\Shield\Model\ConditionFactory;
 class Waf
 {
     /** @var Rule[] */
-    private $rules;
+    private $rules = [];
 
     public function __construct(Rules $rules, RuleFactory $ruleFactory, ConditionFactory $conditionFactory)
     {
