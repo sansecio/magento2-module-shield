@@ -46,7 +46,9 @@ class Rule
             case 'header':
                 return count($parts) === 3 ? $request->getHeader($parts[2], '') : '';
             case 'param':
-                return count($pars) === 3 ? $request->getParam($parts[2], '') : '';
+                return count($parts) === 3 ? $request->getParam($parts[2], '') : '';
+            case 'cookie':
+                return count($parts) === 3 ? $request->getCookie($parts[2], '') : '';
             case 'ip':
                 return $this->ip->collectRequestIPs();
             default:
