@@ -6,12 +6,29 @@
     "magento/framework": "*",
     "ext-openssl": "*"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^8"
+  },
   "autoload": {
     "files": [
       "registration.php"
     ],
     "psr-4": {
       "Sansec\\Shield\\": ""
+    }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://repo.magento.com/"
+    }
+  ],
+  "config": {
+    "allow-plugins": {
+      "magento/composer-dependency-version-audit-plugin": true,
+      "magento/magento-composer-installer": true,
+      "magento/inventory-composer-installer": true,
+      "laminas/laminas-dependency-plugin": true
     }
   }
 }

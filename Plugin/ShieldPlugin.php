@@ -4,11 +4,9 @@ namespace Sansec\Shield\Plugin;
 
 use Magento\Framework\App\FrontControllerInterface;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\ResponseInterface;
 use Sansec\Shield\Logger\Logger;
 use Sansec\Shield\Model\Config;
 use Sansec\Shield\Model\Report;
-use Sansec\Shield\Model\Rules;
 use Sansec\Shield\Model\Waf;
 
 class ShieldPlugin

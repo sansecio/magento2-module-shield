@@ -24,4 +24,15 @@
     <type name="Magento\Framework\App\FrontControllerInterface">
         <plugin name="sansec_shield" type="Sansec\Shield\Plugin\ShieldPlugin"/>
     </type>
+    <type name="Sansec\Shield\Model\IP">
+        <arguments>
+            <argument name="ipHeaders" xsi:type="array">
+                <item name="REMOTE_ADDR" xsi:type="string">REMOTE_ADDR</item>
+                <item name="HTTP_CF_CONNECTING_IP" xsi:type="string">HTTP_CF_CONNECTING_IP</item>
+                <item name="HTTP_X_REAL_IP" xsi:type="string">HTTP_X_REAL_IP</item>
+                <item name="HTTP_CLIENT_IP" xsi:type="string">HTTP_CLIENT_IP</item>
+                <item name="HTTP_X_FORWARDED_FOR" xsi:type="string">HTTP_X_FORWARDED_FOR</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

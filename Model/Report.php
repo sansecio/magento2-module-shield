@@ -4,7 +4,6 @@ namespace Sansec\Shield\Model;
 
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\HTTP\Client\CurlFactory;
-use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Framework\Serialize\SerializerInterface;
 use Sansec\Shield\Logger\Logger;
 
@@ -59,6 +58,7 @@ class Report
                     'body' => $request->getContent(),
                     'ips' => $this->ip->collectRequestIPs(),
                     'headers' => $request->getHeaders()->toArray(),
+                    'scheme' => $request->getScheme(),
                 ]
             ]);
             $curl->post($this->config->getReportUrl(), $data);
