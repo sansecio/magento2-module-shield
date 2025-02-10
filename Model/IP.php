@@ -5,7 +5,7 @@ namespace Sansec\Shield\Model;
 class IP
 {
     /** @var string[] */
-    private $ipHeaders = [
+    private const IP_HEADERS = [
         'REMOTE_ADDR',
         'HTTP_CF_CONNECTING_IP',
         'HTTP_X_REAL_IP',
@@ -21,7 +21,7 @@ class IP
     public function collectRequestIPs(): array
     {
         $requestIPs = [];
-        foreach ($this->ipHeaders as $header) {
+        foreach (self::IP_HEADERS as $header) {
             if (isset($_SERVER[$header])) {
                 $ips = preg_split('/[\s,]+/', $_SERVER[$header]);
                 foreach ($ips as $ip) {
