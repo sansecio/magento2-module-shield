@@ -3,7 +3,6 @@
 namespace Sansec\Shield\Model;
 
 use Magento\Framework\App\RequestInterface;
-use Sansec\Shield\Model\ConditionFactory;
 
 class Rule
 {
@@ -17,16 +16,13 @@ class Rule
     private $ip;
 
     public function __construct(
-        ConditionFactory $conditionFactory,
         IP $ip,
         string $action,
         array $conditions = []
     ) {
         $this->action = $action;
         $this->ip = $ip;
-        foreach ($conditions as $condition) {
-            $this->conditions[] = $conditionFactory->create($condition);
-        }
+        $this->conditions = $conditions;
     }
 
     private function extractTargetValue(string $target, RequestInterface $request): mixed
