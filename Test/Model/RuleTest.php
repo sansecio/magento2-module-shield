@@ -65,4 +65,10 @@ class RuleTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue($rule->matches($request));
     }
+
+    public function testRuleWithoutConditions()
+    {
+        $rule = new Rule(new IP(), 'block', []);
+        $this->assertFalse($rule->matches($this->createMock(Http::class)));
+    }
 }

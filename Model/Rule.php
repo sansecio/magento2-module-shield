@@ -122,6 +122,6 @@ class Rule
                 return false;
             }
         }
-        return true;
+        return count($this->conditions) > 0;
     }
 }
