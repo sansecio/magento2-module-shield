@@ -118,7 +118,7 @@ class Rule
             if (is_string($value) && strlen($value) > 0) {
                 $value = $this->preprocessTargetValue($value, $condition);
             }
-            if (!$this->targetValueMatchesCondition($value, $condition)) {
+            if (empty($value) || !$this->targetValueMatchesCondition($value, $condition)) {
                 return false;
             }
         }
