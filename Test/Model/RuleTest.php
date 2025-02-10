@@ -46,7 +46,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($rule->matches($request));
     }
 
-    public function testMultipleRules()
+    public function testRuleWithMultipleConditions()
     {
         $request = $this->createConfiguredMock(
             Http::class,
