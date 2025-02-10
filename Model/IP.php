@@ -5,13 +5,12 @@ namespace Sansec\Shield\Model;
 class IP
 {
     /** @var string[] */
-    private const IP_HEADERS = [
-        'REMOTE_ADDR',
-        'HTTP_CF_CONNECTING_IP',
-        'HTTP_X_REAL_IP',
-        'HTTP_CLIENT_IP',
-        'HTTP_X_FORWARDED_FOR'
-    ];
+    private $ipHeaders;
+
+    public function __construct(array $ipHeaders = [])
+    {
+        $this->ipHeaders = $ipHeaders;
+    }
 
     private function isPrivateIP(string $ip): bool
     {
@@ -21,7 +20,7 @@ class IP
     public function collectRequestIPs(): array
     {
         $requestIPs = [];
-        foreach (self::IP_HEADERS as $header) {
+        foreach ($this->ipHeaders as $header) {
             if (isset($_SERVER[$header])) {
                 $ips = preg_split('/[\s,]+/', $_SERVER[$header]);
                 foreach ($ips as $ip) {
