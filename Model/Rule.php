@@ -25,7 +25,7 @@ class Rule
         $this->conditions = $conditions;
     }
 
-    private function extractTargetValue(string $target, RequestInterface $request): mixed
+    private function extractTargetValue(string $target, RequestInterface $request)
     {
         $parts = explode('.', $target);
         if ($parts[0] !== 'req') {
@@ -82,7 +82,7 @@ class Rule
         return $value;
     }
 
-    private function targetValueMatchesCondition(mixed $value, Condition $condition): bool
+    private function targetValueMatchesCondition($value, Condition $condition): bool
     {
         $matches = false;
         switch ($condition->type) {
