@@ -11,5 +11,6 @@ jobs:
           php-version: '7.2'
           extensions: gd, mcrypt, curl, intl, xsl, mbstring, openssl, zip, soap, bcmath
       - uses: actions/checkout@v3
+      - run: composer global config http-basic.repo.magento.com ${{ secrets.MAGENTO_USERNAME }} ${{ secrets.MAGENTO_PASSWORD }}
       - run: composer install
       - run: ./vendor/bin/phpunit .
