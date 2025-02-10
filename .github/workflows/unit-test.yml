@@ -14,5 +14,5 @@ jobs:
       - uses: php-actions/phpunit@v3
         with:
           bootstrap: vendor/autoload.php
-          version: "8"
+          version: "7"
           php_version: "7.2"
