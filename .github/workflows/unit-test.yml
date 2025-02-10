@@ -12,5 +12,6 @@ jobs:
         with:
           args: --ignore-platform-reqs
       - uses: php-actions/phpunit@v3
-        bootstrap: vendor/autoload.php
-        php_version: "7.2"
+        with:
+          bootstrap: vendor/autoload.php
+          php_version: "7.2"
