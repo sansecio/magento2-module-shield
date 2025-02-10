@@ -6,6 +6,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: composer config --no-plugins allow-plugins.laminas/laminas-dependency-plugin true
+      - run: composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+      - run: composer config --no-plugins allow-plugins.magento/composer-root-update-plugin true
+      - run: composer config --no-plugins allow-plugins.magento/inventory-composer-installer true
+      - run: composer config --no-plugins allow-plugins.magento/magento-composer-installer true
       - uses: extdn/github-actions-m2/magento-unit-tests/7.3@master
         env:
           MODULE_NAME: Sansec_Shield
