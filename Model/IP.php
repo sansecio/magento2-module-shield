@@ -15,23 +15,7 @@ class IP
 
     private function isPrivateIP(string $ip): bool
     {
-        $ip = ip2long($ip);
-        if ($ip === false) {
-            return true; // Invalid IPs are considered private
-        }
-
-        // RFC 1918 private networks
-        return (
-            ($ip & 0xff000000) === 0x0a000000 || // 10.0.0.0/8
-            ($ip & 0xfff00000) === 0xac100000 || // 172.16.0.0/12
-            ($ip & 0xffff0000) === 0xc0a80000 || // 192.168.0.0/16
-            // RFC 6598 Carrier-grade NAT
-            ($ip & 0xff000000) === 0x64400000 || // 100.64.0.0/10
-            // RFC 3927 Link-local
-            ($ip & 0xffff0000) === 0xa9fe0000 || // 169.254.0.0/16
-            // RFC 4193 Unique local addresses
-            ($ip & 0xfe000000) === 0xfc000000    // fc00::/7
-        );
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false;
     }
 
     public function collectRequestIPs(): array
