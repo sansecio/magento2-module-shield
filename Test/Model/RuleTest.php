@@ -3,7 +3,6 @@
 namespace Sansec\Shield\Test\Model;
 
 use Magento\Framework\App\Request\Http;
-use Magento\Framework\App\RequestInterface;
 use Sansec\Shield\Model\Condition;
 use Sansec\Shield\Model\IP;
 use Sansec\Shield\Model\Rule;
