@@ -11,6 +11,4 @@ jobs:
       - uses: php-actions/composer@v6
         with:
           args: --ignore-platform-reqs
-      - uses: php-actions/phpunit@v3
-        with:
-          bootstrap: vendor/autoload.php
+      - run: ./vendor/bin/phpunit .
