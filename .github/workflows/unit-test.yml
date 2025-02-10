@@ -5,10 +5,11 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+          extensions: gd, mcrypt, curl, intl, xsl, mbstring, openssl, zip, soap, bcmath
       - uses: actions/checkout@v3
       - uses: php-actions/composer@v6
-        with:
-          args: --ignore-platform-reqs
       - run: ./vendor/bin/phpunit .
