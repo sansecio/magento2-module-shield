@@ -13,5 +13,11 @@
     "psr-4": {
       "Sansec\\Shield\\": ""
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://mirror.mage-os.org/"
+    }
+  ]
 }
