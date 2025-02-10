@@ -62,6 +62,10 @@ class Rules
         $curl->setCredentials($this->config->getLicenseKey(), $this->config->getLicenseKey());
         $curl->get(sprintf("%s?v=%d", $this->config->getRulesUrl(), self::PROTOCOL_VERSION));
 
+        if ($curl->getStatus() === 401) {
+            $this->cache->remove(CacheType::TYPE_IDENTIFIER);
+        }
+
         if ($curl->getStatus() !== 200) {
             throw new \RuntimeException("Invalid status code {$curl->getStatus()}");
         }
