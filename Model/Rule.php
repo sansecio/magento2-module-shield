@@ -70,7 +70,7 @@ class Rule
         return $value;
     }
 
-    private function targetValueMatchesCondition(string $value, Condition $condition): bool
+    private function targetValueMatchesCondition(mixed $value, Condition $condition): bool
     {
         $matches = false;
         switch ($condition->type) {
@@ -81,10 +81,11 @@ class Rule
                 $matches = strpos($value, $condition->value) !== false;
                 break;
             case 'equals':
-                $matches = strcmp($value, $condition->value) === 0;
-                break;
-            case 'ip':
-                $matches = in_array($condition->value, $value);
+                if (is_array($value)) {
+                    $matches = in_array($condition->value, $value);
+                } else {
+                    $matches = strcmp($value, $condition->value) === 0;
+                }
                 break;
             case 'network':
                 foreach ($value as $ip) {
