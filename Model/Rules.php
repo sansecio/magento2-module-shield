@@ -62,7 +62,7 @@ class Rules
         $curl->setCredentials($this->config->getLicenseKey(), $this->config->getLicenseKey());
         $curl->get(sprintf("%s?v=%d", $this->config->getRulesUrl(), self::PROTOCOL_VERSION));
 
-        if ($curl->getStatus() === 401) {
+        if ($curl->getStatus() === 403) {
             $this->cache->remove(CacheType::TYPE_IDENTIFIER);
         }
 
