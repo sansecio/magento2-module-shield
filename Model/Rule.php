@@ -65,6 +65,18 @@ class Rule
                 case 'strip_non_alpha':
                     $value = preg_replace('/[^a-zA-Z]/', '', $value);
                     break;
+                case 'html_entity_decode':
+                    $value = html_entity_decode($value);
+                    break;
+                case 'rawurldecode':
+                    $value = rawurldecode($value);
+                    break;
+                case 'hex2bin':
+                    $value = hex2bin($value);
+                    break;
+                case 'strip_tags':
+                    $value = strip_tags($value);
+                    break;
             }
         }
         return $value;
