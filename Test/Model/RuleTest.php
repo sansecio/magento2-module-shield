@@ -30,8 +30,13 @@ class RuleTest extends \PHPUnit\Framework\TestCase
 
     public function testRuleNetwork()
     {
-        $_SERVER['REMOTE_ADDR'] = '123.123.123.123';
-        $rule = new Rule(new IP(), 'block', [
+        $ipMock = $this->getMockBuilder(IP::class)
+            ->onlyMethods(['collectRequestIPs'])
+            ->getMock();
+
+        $ipMock->method('collectRequestIPs')->willReturn(['123.123.123.123']);
+
+        $rule = new Rule($ipMock, 'block', [
             new Condition('req.ip', 'network', '123.123.123.0/24')
         ]);
         $this->assertTrue($rule->matches($this->createMock(Http::class)));
