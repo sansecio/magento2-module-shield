@@ -59,6 +59,7 @@ class Report
                     'body' => $request->getContent(),
                     'ips' => $this->ip->collectRequestIPs(),
                     'headers' => $request->getHeaders()->toArray(),
+                    'scheme' => $request->getScheme(),
                 ]
             ]);
             $curl->post($this->config->getReportUrl(), $data);
