@@ -54,7 +54,7 @@ class Report
                 'rules' => $rules,
                 'request' => [
                     'method' => $request->getMethod(),
-                    'path' => $request->getRequestUri(),
+                    'uri' => $request->getRequestUri(),
                     'body' => $request->getContent(),
                     'ips' => $this->ip->collectRequestIPs(),
                     'headers' => $request->getHeaders()->toArray(),

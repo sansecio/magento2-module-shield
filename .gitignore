@@ -1,1 +1,6 @@
 /vendor
+.phpunit.result.cache
+Test/Unit
+composer.lock
+phpunit.xml.dist
+.envrc
