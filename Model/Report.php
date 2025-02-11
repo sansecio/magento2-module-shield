@@ -3,6 +3,7 @@
 namespace Sansec\Shield\Model;
 
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\HTTP\Client\CurlFactory;
 use Magento\Framework\Serialize\SerializerInterface;
 use Sansec\Shield\Logger\Logger;
@@ -44,12 +45,20 @@ class Report
             return;
         }
         try {
+            $action = 'report';
+            foreach ($rules as $rule) {
+                if (isset($rule['action']) && $rule['action'] === 'block') {
+                    $action = 'block';
+                    break;
+                }
+            }
+
             $curl = $this->curlFactory->create();
             $curl->setCredentials($this->config->getLicenseKey(), $this->config->getLicenseKey());
             $curl->setTimeout(5);
             $curl->addHeader('Content-Type', 'application/json');
             $data = $this->serializer->serialize([
-                'type' => 'report',
+                'action' => $action,
                 'timestamp' => time(),
                 'rules' => $rules,
                 'request' => [
