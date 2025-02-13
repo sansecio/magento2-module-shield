@@ -4,7 +4,7 @@ namespace Sansec\Shield\Test\Performance;
 
 use Magento\Framework\App\RequestInterface;
 use PHPUnit\Framework\TestCase;
-use Sansec\Shield\Model\WAF;
+use Sansec\Shield\Model\Waf;
 use Sansec\Shield\Model\Rules;
 use Sansec\Shield\Model\IP;
 use Sansec\Shield\Model\RuleFactory;
