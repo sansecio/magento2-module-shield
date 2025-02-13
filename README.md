@@ -1,6 +1,6 @@
 # Sansec Shield
 
-Requires Magento 2.3+ and PHP 7.2+
+Requires Magento 2.3+, PHP 7.2+ and an [eComscan account](https://sansec.io/pricing) (Advanced or up).
 
 ## Installation
 
@@ -14,4 +14,12 @@ bin/magento sansec:shield:sync-rules
 
 You can also configure your license key via System -> Configuration -> Security -> Sansec Shield.
 
-Rules are downloaded asynchronously via cron (every 5 minutes).
+## Live reports
+
+You can view live reports at your [Sansec Dashboard](https://dashboard.sansec.io/d/account/shield). If you do not want reports, you can disable it via:
+
+```bash
+bin/magento config:set sansec_shield/general/enabled 0
+```
+
+See for FAQs [our Shield guide](https://sansec.io/guides/sansec-shield).
