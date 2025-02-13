@@ -24,18 +24,32 @@ class Report
     /** @var IP */
     private $ip;
 
+    /** @var string[] */
+    private $filteredHeaders;
+
     public function __construct(
         Config $config,
         CurlFactory $curlFactory,
         Logger $logger,
         SerializerInterface $serializer,
-        IP $ip
+        IP $ip,
+        array $filteredHeaders = []
     ) {
         $this->config = $config;
         $this->curlFactory = $curlFactory;
         $this->logger = $logger;
         $this->serializer = $serializer;
         $this->ip = $ip;
+        $this->filteredHeaders = $filteredHeaders;
+    }
+
+    private function getRequestHeaders(RequestInterface $request): array
+    {
+        $headers = $request->getHeaders()->toArray();
+        foreach ($this->filteredHeaders as $filteredHeader) {
+            unset($headers[$filteredHeader]);
+        }
+        return $headers;
     }
 
     public function sendReport(RequestInterface $request, array $rules)
@@ -57,7 +71,7 @@ class Report
                     'path' => $request->getRequestUri(),
                     'body' => $request->getContent(),
                     'ips' => $this->ip->collectRequestIPs(),
-                    'headers' => $request->getHeaders()->toArray(),
+                    'headers' => $this->getRequestHeaders($request),
                     'scheme' => $request->getScheme(),
                 ]
             ]);
