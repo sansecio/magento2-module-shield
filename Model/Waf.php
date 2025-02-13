@@ -30,7 +30,7 @@ class Waf
     {
         return array_values(array_filter(
             $this->rules,
-            function(Rule $rule) use ($request) {
+            function (Rule $rule) use ($request) {
                 return $rule->matches($request);
             }
         ));
