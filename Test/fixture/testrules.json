@@ -1,0 +1,461 @@
+{
+    "version": "1.0",
+    "rules": [
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "contains",
+                    "value": "SANSEC-SHIELD-TEST"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "network",
+                    "value": "82.202.160.0/22"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "network",
+                    "value": "82.202.165.0/24"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "network",
+                    "value": "82.202.166.0/23"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "network",
+                    "value": "82.202.168.0/21"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "sourceData"
+                },
+                {
+                    "target": "req.uri",
+                    "type": "contains",
+                    "value": "estimate-shipping-methods"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "addafterfiltercallback",
+                    "preprocess": [
+                        "urldecode",
+                        "urldecode",
+                        "strip_non_alpha",
+                        "strtolower"
+                    ]
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "157.230.230.193"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "217.182.199.126"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "2a4e:513f:9c4b:1736:3250:b425:8ff6:7a99"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "181.214.186.223"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "198.145.173.206"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "162.211.152.100"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "188.74.241.97"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "154.194.23.121"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "154.205.176.177"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "52.87.98.44"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "198.145.174.131"
+                }
+            ]
+        },
+        {
+            "action": "report",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "contains",
+                    "value": "rest/async/bulk/V1"
+                },
+                {
+                    "target": "req.body",
+                    "type": "regex",
+                    "value": "\"\\w+_\":"
+                }
+            ]
+        },
+        {
+            "action": "report",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "87.213.92.98"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "2a10:3781:879:1:b103:985b:5d46:3cf4"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.ip",
+                    "type": "equals",
+                    "value": "45.137.90.101"
+                }
+            ]
+        },
+        {
+            "action": "report",
+            "conditions": [
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "\u0000"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/checkout/onepage/savebilling"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%00"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/checkout/onepage/savepayment"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%00"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/checkout/json/savebilling"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%00"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/checkout/json/savepayment"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%00"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/aheadmetrics/auth/index"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%40eval"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/bssreorderproduct/list/add"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%40eval"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/customgrid/blcg_column_renderer_index"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%40eval"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/tabshome/index/ajax"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%40eval"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/customgrid/index/index"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%40eval"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/freegift/cart/gurlgift"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%40eval"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/gwishlist/gwishlist/updategwishlist"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%40eval"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/multidealpro/index/edit"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%40eval"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/netgocust/gwishlist/updategwishlist"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%40eval"
+                }
+            ]
+        },
+        {
+            "action": "block",
+            "conditions": [
+                {
+                    "target": "req.uri",
+                    "type": "equals",
+                    "value": "/tabshome/index/ajax"
+                },
+                {
+                    "target": "req.body",
+                    "type": "contains",
+                    "value": "%40eval"
+                }
+            ]
+        }
+    ]
+}
