@@ -23,3 +23,7 @@ bin/magento config:set sansec_shield/general/enabled 0
 ```
 
 See for FAQs [our Shield guide](https://sansec.io/guides/sansec-shield).
+
+## License
+
+See [LICENSE](./LICENSE) file.
