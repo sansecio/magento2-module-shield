@@ -50,7 +50,6 @@ class RequestStub implements RequestInterface
         return $this->headers[$name] ?? '';
     }
 
-    // Required interface methods with dummy implementations
     public function getModuleName()
     {
         return '';
@@ -99,14 +98,13 @@ class RequestStub implements RequestInterface
 
 class RuleMatchingTest extends TestCase
 {
-    /** @var WAF */
+    /** @var Waf */
     private $waf;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Create mock dependencies
         $rulesJson = file_get_contents(__DIR__ . '/../../Test/fixture/testrules.json');
         $rulesData = json_decode($rulesJson, true);
 
@@ -118,7 +116,7 @@ class RuleMatchingTest extends TestCase
         $ruleFactory = new RuleFactory(new IP());
         $conditionFactory = new ConditionFactory();
 
-        $this->waf = new WAF($rules, $ruleFactory, $conditionFactory);
+        $this->waf = new Waf($rules, $ruleFactory, $conditionFactory);
     }
 
     public function testMatchRequestPerformance(): void
@@ -172,10 +170,8 @@ class RuleMatchingTest extends TestCase
             $memoryIncrease / 1024 / 1024
         );
 
-        // This assertion ensures the test runs but doesn't strictly test a value
-        // Adjust the threshold based on your performance requirements
         $this->assertLessThan(
-            10, // Maximum acceptable average time in milliseconds
+            10,
             $averageMs,
             "Rule matching is taking longer than expected"
         );
