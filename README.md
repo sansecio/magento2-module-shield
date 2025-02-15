@@ -19,7 +19,7 @@ You can also configure your license key via System -> Configuration -> Security 
 You can view live reports at your [Sansec Dashboard](https://dashboard.sansec.io/d/account/shield). If you do not want reports, you can disable it via:
 
 ```bash
-bin/magento config:set sansec_shield/general/enabled 0
+bin/magento config:set sansec_shield/general/report_enabled 0
 ```
 
 See for FAQs [our Shield guide](https://sansec.io/guides/sansec-shield).
