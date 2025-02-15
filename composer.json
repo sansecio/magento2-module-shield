@@ -1,6 +1,7 @@
 {
   "name": "sansec/magento2-module-shield",
   "type": "magento2-module",
+  "license": "MIT",
   "require": {
     "php": ">=7.2",
     "magento/framework": "*",
