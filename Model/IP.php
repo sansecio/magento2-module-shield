@@ -28,8 +28,7 @@ class IP
                 if (!isset($_SERVER[$header])) {
                     continue;
                 }
-                $ips = preg_split('/[\s,]+/', $_SERVER[$header]);
-                foreach ($ips as $ip) {
+                foreach (preg_split('/[\s,]+/', $_SERVER[$header]) as $ip) {
                     $ip = trim($ip);
                     if (empty($ip) || $this->isPrivateIP($ip)) {
                         continue;
