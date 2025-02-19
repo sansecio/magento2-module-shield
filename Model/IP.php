@@ -4,6 +4,9 @@ namespace Sansec\Shield\Model;
 
 class IP
 {
+    /** @var string[]|null */
+    private $requestIPs;
+
     /** @var string[] */
     private $ipHeaders;
 
@@ -19,19 +22,23 @@ class IP
 
     public function collectRequestIPs(): array
     {
-        $requestIPs = [];
-        foreach ($this->ipHeaders as $header) {
-            if (isset($_SERVER[$header])) {
-                $ips = preg_split('/[\s,]+/', $_SERVER[$header]);
-                foreach ($ips as $ip) {
+        if ($this->requestIPs === null) {
+            $requestIPs = [];
+            foreach ($this->ipHeaders as $header) {
+                if (!isset($_SERVER[$header])) {
+                    continue;
+                }
+                foreach (preg_split('/[\s,]+/', $_SERVER[$header]) as $ip) {
                     $ip = trim($ip);
-                    if ($ip !== '' && !$this->isPrivateIP($ip)) {
-                        $requestIPs[] = $ip;
+                    if (empty($ip) || $this->isPrivateIP($ip)) {
+                        continue;
                     }
+                    $requestIPs[] = $ip;
                 }
             }
+            $this->requestIPs = array_unique($requestIPs);
         }
-        return array_unique($requestIPs);
+        return $this->requestIPs;
     }
 
     public function ipMatchesCidr(string $ip, string $cidr): bool
