@@ -22,7 +22,8 @@ class Config
 
     public function isEnabled(): bool
     {
-        return (bool) $this->config->getValue(self::XML_PATH_ENABLED);
+        $enabled = (bool) $this->config->getValue(self::XML_PATH_ENABLED);
+        return $enabled && $this->getLicenseKey() !== '';
     }
 
     public function isReportEnabled(): bool
