@@ -4,6 +4,15 @@ Requires Magento 2.3+, PHP 7.2+ and an [eComscan account](https://sansec.io/pric
 
 ## Installation
 
+
+If you are using **Composer 1.x**, you will need to add the Shield repository to your composer.json as [packagist is removing support](https://blog.packagist.com/shutting-down-packagist-org-support-for-composer-1-x/) for this version:
+
+```bash
+composer config repositories.sansec-shield vcs https://github.com/sansecio/magento2-module-shield.git
+```
+
+Then, proceed with the installation:
+
 ```bash
 composer require sansec/magento2-module-shield
 bin/magento setup:upgrade
@@ -12,7 +21,9 @@ bin/magento cache:clean
 bin/magento sansec:shield:sync-rules
 ```
 
-You can also configure your license key via System -> Configuration -> Security -> Sansec Shield.
+## Configuration
+
+You can configure your license key and other settings via System -> Configuration -> Security -> Sansec Shield.
 
 ## Live reports
 
