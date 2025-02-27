@@ -67,13 +67,13 @@ class Report
                 'timestamp' => time(),
                 'rules' => $rules,
                 'request' => [
-                    'method' => $request->getMethod(),
-                    'path' => $request->getRequestUri(),
-                    'body' => $request->getContent(),
-                    'ips' => $this->ip->collectRequestIPs(),
+                    'method'  => $request->getMethod(),
+                    'uri'     => $request->getRequestUri(),
+                    'body'    => $request->getContent(),
+                    'ips'     => $this->ip->collectRequestIPs(),
                     'headers' => $this->getRequestHeaders($request),
-                    'scheme' => $request->getScheme(),
-                    'params' => $request->getParams(),
+                    'scheme'  => $request->getScheme(),
+                    'params'  => $request->getParams(),
                 ]
             ]);
             $curl->post($this->config->getReportUrl(), $data);
