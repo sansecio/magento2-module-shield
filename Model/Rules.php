@@ -2,22 +2,22 @@
 
 namespace Sansec\Shield\Model;
 
-use Magento\Framework\App\CacheInterface;
+use Magento\Framework\FlagManager;
 use Magento\Framework\HTTP\Client\CurlFactory;
 use Magento\Framework\Module\Dir;
 use Magento\Framework\Serialize\SerializerInterface;
-use Sansec\Shield\Model\Cache\Type\CacheType;
 use Magento\Framework\Module\Dir\Reader as ModuleDirReader;
 
 class Rules
 {
     private const PROTOCOL_VERSION = '1';
+    private const FLAG_CODE = 'sansec_shield_rules';
 
     /** @var Config */
     private $config;
 
-    /** @var CacheInterface */
-    private $cache;
+    /** @var FlagManager */
+    private $flagManager;
 
     /** @var SerializerInterface */
     private $serializer;
@@ -30,13 +30,13 @@ class Rules
 
     public function __construct(
         Config $config,
-        CacheInterface $cache,
+        FlagManager $flagManager,
         SerializerInterface $serializer,
         CurlFactory $curlFactory,
         ModuleDirReader $moduleDirReader
     ) {
         $this->config = $config;
-        $this->cache = $cache;
+        $this->flagManager = $flagManager;
         $this->serializer = $serializer;
         $this->curlFactory = $curlFactory;
         $this->moduleDirReader = $moduleDirReader;
@@ -44,14 +44,14 @@ class Rules
 
     public function loadRules(): array
     {
-        $rulesData = $this->cache->load(CacheType::TYPE_IDENTIFIER);
+        $rulesData = $this->flagManager->getFlagData(self::FLAG_CODE);
         if (empty($rulesData)) {
             return [];
         }
         try {
             return $this->serializer->unserialize($rulesData);
         } catch (\InvalidArgumentException $exception) {
-            $this->cache->remove(CacheType::TYPE_IDENTIFIER);
+            $this->flagManager->deleteFlag(self::FLAG_CODE);
         }
         return [];
     }
@@ -63,7 +63,7 @@ class Rules
         $curl->get(sprintf("%s?v=%d", $this->config->getRulesUrl(), self::PROTOCOL_VERSION));
 
         if ($curl->getStatus() === 403) {
-            $this->cache->remove(CacheType::TYPE_IDENTIFIER);
+            $this->flagManager->deleteFlag(self::FLAG_CODE);
         }
 
         if ($curl->getStatus() !== 200) {
@@ -129,11 +129,7 @@ class Rules
         }
 
         if ($this->verifySignature($rulesData, $signature)) {
-            $this->cache->save(
-                $rulesData,
-                CacheType::TYPE_IDENTIFIER,
-                [CacheType::CACHE_TAG]
-            );
+            $this->flagManager->saveFlag(self::FLAG_CODE, $rulesData);
             return $this->serializer->unserialize($rulesData);
         }
         return [];
