@@ -36,7 +36,7 @@ class IP
                     $requestIPs[] = $ip;
                 }
             }
-            $this->requestIPs = array_unique($requestIPs);
+            $this->requestIPs = array_values(array_unique($requestIPs));
         }
         return $this->requestIPs;
     }
