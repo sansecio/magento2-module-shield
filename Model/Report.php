@@ -61,6 +61,7 @@ class Report
             $curl = $this->curlFactory->create();
             $curl->setCredentials($this->config->getLicenseKey(), $this->config->getLicenseKey());
             $curl->setTimeout(5);
+            $curl->addHeader('Expect', '');
             $curl->addHeader('Content-Type', 'application/json');
             $data = $this->serializer->serialize([
                 'type' => 'report',
