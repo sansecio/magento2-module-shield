@@ -3,6 +3,7 @@
 namespace Sansec\Shield\Cron;
 
 use Sansec\Shield\Logger\Logger;
+use Sansec\Shield\Model\Config;
 use Sansec\Shield\Model\Rules;
 
 class SyncRules
@@ -13,14 +14,21 @@ class SyncRules
     /** @var Logger */
     private $logger;
 
-    public function __construct(Rules $rules, Logger $logger)
+    /** @var Config */
+    private $config;
+
+    public function __construct(Rules $rules, Logger $logger, Config $config)
     {
         $this->rules = $rules;
         $this->logger = $logger;
+        $this->config = $config;
     }
 
     public function execute(): void
     {
+        if (!$this->config->isEnabled()) {
+            return;
+        }
         try {
             $rules = $this->rules->syncRules();
             $this->logger->info(sprintf("Finished synchronization of %d rules.", count($rules['rules'])));

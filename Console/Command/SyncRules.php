@@ -2,6 +2,7 @@
 
 namespace Sansec\Shield\Console\Command;
 
+use Sansec\Shield\Model\Config;
 use Sansec\Shield\Model\Rules;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,10 +13,14 @@ class SyncRules extends Command
     /** @var Rules */
     private $rules;
 
-    public function __construct(Rules $rules, ?string $name = null)
+    /** @var Config */
+    private $config;
+
+    public function __construct(Rules $rules, Config $config, ?string $name = null)
     {
         parent::__construct($name);
         $this->rules = $rules;
+        $this->config = $config;
     }
 
     protected function configure(): void
@@ -27,6 +32,11 @@ class SyncRules extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        if (!$this->config->isEnabled()) {
+            $output->writeln("Please enable the module and configure the license key.");
+            return;
+        }
+
         $output->writeln('Synchronizing rules...');
         try {
             $rules = $this->rules->syncRules();
