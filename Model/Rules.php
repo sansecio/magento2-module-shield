@@ -112,10 +112,6 @@ class Rules
 
     public function syncRules(): array
     {
-        if (!$this->config->isEnabled()) {
-            return [];
-        }
-
         $data = $this->fetchRules();
 
         $rulesData = base64_decode($data['rules'], true);
@@ -128,10 +124,11 @@ class Rules
             throw new \RuntimeException("Failed to decode base64 signature");
         }
 
-        if ($this->verifySignature($rulesData, $signature)) {
-            $this->flagManager->saveFlag(self::FLAG_CODE, $rulesData);
-            return $this->serializer->unserialize($rulesData);
+        if (!$this->verifySignature($rulesData, $signature)) {
+            throw new \RuntimeException("Rule verification failed");
         }
-        return [];
+
+        $this->flagManager->saveFlag(self::FLAG_CODE, $rulesData);
+        return $this->serializer->unserialize($rulesData);
     }
 }
