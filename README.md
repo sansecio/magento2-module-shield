@@ -31,6 +31,8 @@ You can view live reports at your [Sansec Dashboard](https://dashboard.sansec.io
 bin/magento config:set sansec_shield/general/report_enabled 0
 ```
 
+You can always view detailed logs in `var/log/sansec_shield.log`.
+
 See for FAQs [our Shield guide](https://sansec.io/guides/sansec-shield).
 
 ## License
