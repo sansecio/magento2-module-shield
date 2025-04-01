@@ -37,4 +37,4 @@ See for FAQs [our Shield guide](https://sansec.io/guides/sansec-shield).
 
 ## License
 
-See [LICENSE](./LICENSE) file.
+Sansec Shield is published under the liberal [MIT license](./LICENSE).
