@@ -21,7 +21,7 @@ bin/magento sansec:shield:sync-rules
 
 ## Configuration
 
-You can configure your license key and other settings via System -> Configuration -> Security -> Sansec Shield.
+You can configure your license key and other settings via System → Configuration → Security → Sansec Shield.
 
 ## Live reports
 
