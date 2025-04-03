@@ -67,7 +67,14 @@ class Rules
         }
 
         if ($curl->getStatus() !== 200) {
-            throw new \RuntimeException("Invalid status code {$curl->getStatus()}");
+            switch ($curl->getStatus()) {
+                case 401:
+                    throw new \RuntimeException("Invalid license key, please check configuration.");
+                case 403:
+                    throw new \RuntimeException($curl->getBody());
+                default:
+                    throw new \RuntimeException("Invalid status code {$curl->getStatus()}");
+            }
         }
 
         $data = $this->serializer->unserialize($curl->getBody());
