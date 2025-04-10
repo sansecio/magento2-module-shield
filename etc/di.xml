@@ -39,6 +39,7 @@
         <arguments>
             <argument name="filteredHeaders" xsi:type="array">
                 <item name="Cookie" xsi:type="string">Cookie</item>
+                <item name="Set-Cookie" xsi:type="string">Set-Cookie</item>
                 <item name="Authorization" xsi:type="string">Authorization</item>
             </argument>
         </arguments>
