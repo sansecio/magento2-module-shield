@@ -62,15 +62,12 @@ class Rules
         $curl->setCredentials($this->config->getLicenseKey(), $this->config->getLicenseKey());
         $curl->get(sprintf("%s?v=%d", $this->config->getRulesUrl(), self::PROTOCOL_VERSION));
 
-        if ($curl->getStatus() === 403) {
-            $this->flagManager->deleteFlag(self::FLAG_CODE);
-        }
-
         if ($curl->getStatus() !== 200) {
             switch ($curl->getStatus()) {
                 case 401:
                     throw new \RuntimeException("Invalid license key, please check configuration.");
                 case 403:
+                    $this->flagManager->deleteFlag(self::FLAG_CODE);
                     throw new \RuntimeException($curl->getBody());
                 default:
                     throw new \RuntimeException("Invalid status code {$curl->getStatus()}");
