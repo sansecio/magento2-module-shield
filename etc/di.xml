@@ -24,6 +24,16 @@
     <type name="Magento\Framework\App\FrontControllerInterface">
         <plugin name="sansec_shield" type="Sansec\Shield\Plugin\ShieldPlugin"/>
     </type>
+    <type name="Sansec\Shield\Model\Rules">
+        <arguments>
+            <argument name="serializer" xsi:type="object">Sansec\Shield\Model\Serializer</argument>
+        </arguments>
+    </type>
+    <type name="Sansec\Shield\Model\Report">
+        <arguments>
+            <argument name="serializer" xsi:type="object">Sansec\Shield\Model\Serializer</argument>
+        </arguments>
+    </type>
     <type name="Sansec\Shield\Model\IP">
         <arguments>
             <argument name="ipHeaders" xsi:type="array">
