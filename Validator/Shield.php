@@ -1,15 +1,16 @@
 <?php
 
-namespace Sansec\Shield\Plugin;
+namespace Sansec\Shield\Validator;
 
-use Magento\Framework\App\FrontControllerInterface;
+use Magento\Framework\App\ActionInterface;
+use Magento\Framework\App\Request\ValidatorInterface;
 use Magento\Framework\App\RequestInterface;
 use Sansec\Shield\Logger\Logger;
 use Sansec\Shield\Model\Config;
 use Sansec\Shield\Model\Report;
 use Sansec\Shield\Model\Waf;
 
-class ShieldPlugin
+class Shield implements ValidatorInterface
 {
     /** @var Config */
     private $config;
@@ -31,16 +32,16 @@ class ShieldPlugin
         $this->report = $report;
     }
 
-    public function beforeDispatch(FrontControllerInterface $subject, RequestInterface $request): array
+    public function validate(RequestInterface $request, ActionInterface $action): void
     {
         if (!$this->config->isEnabled()) {
-            return [$request];
+            return;
         }
 
         try {
             $matchedRules = $this->waf->matchRequest($request);
             if (empty($matchedRules)) {
-                return [$request];
+                return;
             }
 
             $this->logger->info(sprintf('Matched %d rules.', count($matchedRules)));
@@ -56,6 +57,5 @@ class ShieldPlugin
         } catch (\Throwable $e) {
             $this->logger->error($e->getMessage());
         }
-        return [$request];
     }
 }

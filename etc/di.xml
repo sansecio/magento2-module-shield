@@ -21,9 +21,6 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\Framework\App\FrontControllerInterface">
-        <plugin name="sansec_shield" type="Sansec\Shield\Plugin\ShieldPlugin"/>
-    </type>
     <type name="Sansec\Shield\Model\Rules">
         <arguments>
             <argument name="serializer" xsi:type="object">Sansec\Shield\Model\Serializer</argument>
@@ -32,6 +29,11 @@
     <type name="Sansec\Shield\Model\Report">
         <arguments>
             <argument name="serializer" xsi:type="object">Sansec\Shield\Model\Serializer</argument>
+            <argument name="filteredHeaders" xsi:type="array">
+                <item name="Cookie" xsi:type="string">Cookie</item>
+                <item name="Set-Cookie" xsi:type="string">Set-Cookie</item>
+                <item name="Authorization" xsi:type="string">Authorization</item>
+            </argument>
         </arguments>
     </type>
     <type name="Sansec\Shield\Model\IP">
@@ -45,12 +47,10 @@
             </argument>
         </arguments>
     </type>
-    <type name="Sansec\Shield\Model\Report">
+    <type name="Magento\Framework\App\Request\CompositeValidator">
         <arguments>
-            <argument name="filteredHeaders" xsi:type="array">
-                <item name="Cookie" xsi:type="string">Cookie</item>
-                <item name="Set-Cookie" xsi:type="string">Set-Cookie</item>
-                <item name="Authorization" xsi:type="string">Authorization</item>
+            <argument name="validators" xsi:type="array">
+                <item name="shield_validator" xsi:type="object">Sansec\Shield\Validator\Shield</item>
             </argument>
         </arguments>
     </type>
