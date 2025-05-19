@@ -21,7 +21,8 @@ class Waf
             }
             $this->rules[] = $ruleFactory->create([
                 'action' => $rule['action'],
-                'conditions' => $conditions
+                'conditions' => $conditions,
+                'name' => $rule['name'] ?? ''
             ]);
         }
     }
