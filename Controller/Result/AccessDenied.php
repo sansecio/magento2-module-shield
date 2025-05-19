@@ -6,7 +6,7 @@ use Magento\Framework\App\Response\HttpInterface as HttpResponseInterface;
 use Magento\Framework\Controller\AbstractResult;
 use Magento\Framework\View\Element\TemplateFactory;
 
-class Denied extends AbstractResult
+class AccessDenied extends AbstractResult
 {
     /** @var TemplateFactory */
     private $templateFactory;
@@ -16,17 +16,17 @@ class Denied extends AbstractResult
         $this->templateFactory = $templateFactory;
     }
 
-    private function renderDeniedTemplate(): string
+    private function renderAccessDeniedTemplate(): string
     {
         return $this->templateFactory->create()
-            ->setTemplate('Sansec_Shield::denied.phtml')
+            ->setTemplate('Sansec_Shield::access_denied.phtml')
             ->toHtml();
     }
 
     protected function render(HttpResponseInterface $response)
     {
         $response->setStatusHeader(403);
-        $response->setBody($this->renderDeniedTemplate());
+        $response->setBody($this->renderAccessDeniedTemplate());
         return $this;
     }
 }
