@@ -52,6 +52,14 @@ class Report
         return $headers;
     }
 
+    private function getPackageVersion(): string
+    {
+        if (class_exists(\Composer\InstalledVersions::class)) {
+            return \Composer\InstalledVersions::getPrettyVersion('sansec/magento2-module-shield') ?? 'unknown';
+        }
+        return 'unknown';
+    }
+
     public function sendReport(RequestInterface $request, array $rules)
     {
         if (!$this->config->isReportEnabled()) {
@@ -67,6 +75,7 @@ class Report
                 'type' => 'report',
                 'timestamp' => time(),
                 'rules' => $rules,
+                'version' => $this->getPackageVersion(),
                 'request' => [
                     'method'  => $request->getMethod(),
                     'uri'     => $request->getRequestUri(),
