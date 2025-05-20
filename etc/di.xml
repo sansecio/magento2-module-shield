@@ -21,6 +21,9 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\App\FrontControllerInterface">
+        <plugin name="sansec_shield" type="Sansec\Shield\Plugin\Shield"/>
+    </type>
     <type name="Sansec\Shield\Model\Rules">
         <arguments>
             <argument name="serializer" xsi:type="object">Sansec\Shield\Model\Serializer</argument>
@@ -44,13 +47,6 @@
                 <item name="HTTP_X_REAL_IP" xsi:type="string">HTTP_X_REAL_IP</item>
                 <item name="HTTP_CLIENT_IP" xsi:type="string">HTTP_CLIENT_IP</item>
                 <item name="HTTP_X_FORWARDED_FOR" xsi:type="string">HTTP_X_FORWARDED_FOR</item>
-            </argument>
-        </arguments>
-    </type>
-    <type name="Magento\Framework\App\Request\CompositeValidator">
-        <arguments>
-            <argument name="validators" xsi:type="array">
-                <item name="shield_validator" xsi:type="object">Sansec\Shield\Validator\Shield</item>
             </argument>
         </arguments>
     </type>
