@@ -1,1 +1,30 @@
-Access Denied
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied</title>
+    <style>
+        .access-denied {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 25px;
+        }
+        .access-denied img {
+            margin-top: 20px;
+            max-width: 125px;
+        }
+    </style>
+</head>
+<body>
+<main class="access-denied">
+    <h1>Access Denied</h1>
+    <p>Your request was blocked and logged by
+        <a href="https://sansec.io/guides/sansec-shield" target="_blank">Sansec Shield</a>.
+    </p>
+    <a href="https://sansec.io/" target="_blank">
+        <img src="<?php echo $block->getViewFileUrl('Sansec_Shield::images/logo.svg'); ?>" alt="Sansec Logo">
+    </a>
+</main>
+</body>
+</html>
