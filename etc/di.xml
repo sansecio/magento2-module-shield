@@ -22,7 +22,7 @@
         </arguments>
     </type>
     <type name="Magento\Framework\App\FrontControllerInterface">
-        <plugin name="sansec_shield" type="Sansec\Shield\Plugin\ShieldPlugin"/>
+        <plugin name="sansec_shield" type="Sansec\Shield\Plugin\Shield"/>
     </type>
     <type name="Sansec\Shield\Model\Rules">
         <arguments>
@@ -32,6 +32,11 @@
     <type name="Sansec\Shield\Model\Report">
         <arguments>
             <argument name="serializer" xsi:type="object">Sansec\Shield\Model\Serializer</argument>
+            <argument name="filteredHeaders" xsi:type="array">
+                <item name="Cookie" xsi:type="string">Cookie</item>
+                <item name="Set-Cookie" xsi:type="string">Set-Cookie</item>
+                <item name="Authorization" xsi:type="string">Authorization</item>
+            </argument>
         </arguments>
     </type>
     <type name="Sansec\Shield\Model\IP">
@@ -42,15 +47,6 @@
                 <item name="HTTP_X_REAL_IP" xsi:type="string">HTTP_X_REAL_IP</item>
                 <item name="HTTP_CLIENT_IP" xsi:type="string">HTTP_CLIENT_IP</item>
                 <item name="HTTP_X_FORWARDED_FOR" xsi:type="string">HTTP_X_FORWARDED_FOR</item>
-            </argument>
-        </arguments>
-    </type>
-    <type name="Sansec\Shield\Model\Report">
-        <arguments>
-            <argument name="filteredHeaders" xsi:type="array">
-                <item name="Cookie" xsi:type="string">Cookie</item>
-                <item name="Set-Cookie" xsi:type="string">Set-Cookie</item>
-                <item name="Authorization" xsi:type="string">Authorization</item>
             </argument>
         </arguments>
     </type>
