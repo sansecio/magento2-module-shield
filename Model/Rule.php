@@ -15,19 +15,14 @@ class Rule
     /** @var IP */
     private $ip;
 
-    /** @var string */
-    private $name;
-
     public function __construct(
         IP $ip,
         string $action,
-        array $conditions = [],
-        string $name = ''
+        array $conditions = []
     ) {
         $this->action = $action;
         $this->ip = $ip;
         $this->conditions = $conditions;
-        $this->name = $name;
     }
 
     private function extractTargetValue(string $target, RequestInterface $request)
