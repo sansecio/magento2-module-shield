@@ -4,14 +4,13 @@ namespace Sansec\Shield\Plugin;
 
 use Magento\Framework\App\FrontControllerInterface;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\App\Response\HttpInterface;
+use Magento\Framework\App\Response\HttpFactory as HttpResponseFactory;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\View\Element\TemplateFactory;
 use Sansec\Shield\Logger\Logger;
 use Sansec\Shield\Model\Config;
 use Sansec\Shield\Model\Report;
 use Sansec\Shield\Model\Waf;
-use Magento\Framework\App\ResponseFactory as HttpResponseFactory;
 
 class Shield
 {
@@ -49,7 +48,7 @@ class Shield
         $this->templateFactory = $templateFactory;
     }
 
-    private function getAccessDeniedResponse(): HttpInterface
+    private function getAccessDeniedResponse(): ResponseInterface
     {
         $response = $this->responseFactory->create();
         $response->setHttpResponseCode(403);
