@@ -21,8 +21,7 @@ class RuleFactory
         return new Rule(
             $this->ip,
             $data['action'],
-            $data['conditions'] ?? [],
-            $data['name'] ?? ''
+            $data['conditions'] ?? []
         );
     }
 }
