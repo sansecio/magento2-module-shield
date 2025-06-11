@@ -64,24 +64,21 @@ class Shield
             return $proceed($request);
         }
 
-        try {
-            $matchedRules = $this->waf->matchRequest($request);
-            if (empty($matchedRules)) {
-                return $proceed($request);
-            }
-
-            $this->logger->info(sprintf('Matched %d rules.', count($matchedRules)));
-            $this->report->sendReport($request, $matchedRules);
-
-            foreach ($matchedRules as $rule) {
-                if ($rule->action === 'block') {
-                    $this->logger->info('Blocked request', ['rule' => $rule]);
-                    return $this->getAccessDeniedResponse();
-                }
-            }
-        } catch (\Throwable $e) {
-            $this->logger->error($e->getMessage());
+        $matchedRules = $this->waf->matchRequest($request);
+        if (empty($matchedRules)) {
+            return $proceed($request);
         }
+
+        $this->logger->info(sprintf('Matched %d rules.', count($matchedRules)));
+        $this->report->sendReport($request, $matchedRules);
+
+        foreach ($matchedRules as $rule) {
+            if ($rule->action === 'block') {
+                $this->logger->info('Blocked request', ['rule' => $rule]);
+                return $this->getAccessDeniedResponse();
+            }
+        }
+
         return $proceed($request);
     }
 }
