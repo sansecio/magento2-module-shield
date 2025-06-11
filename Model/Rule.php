@@ -113,15 +113,19 @@ class Rule
 
     public function matches(RequestInterface $request): bool
     {
-        foreach ($this->conditions as $condition) {
-            $value = $this->extractTargetValue($condition->target, $request);
-            if (is_string($value) && strlen($value) > 0) {
-                $value = $this->preprocessTargetValue($value, $condition);
+        try {
+            foreach ($this->conditions as $condition) {
+                $value = $this->extractTargetValue($condition->target, $request);
+                if (is_string($value) && strlen($value) > 0) {
+                    $value = $this->preprocessTargetValue($value, $condition);
+                }
+                if (empty($value) || !$this->targetValueMatchesCondition($value, $condition)) {
+                    return false;
+                }
             }
-            if (empty($value) || !$this->targetValueMatchesCondition($value, $condition)) {
-                return false;
-            }
+            return count($this->conditions) > 0;
+        } catch (\Throwable $e) {
+            return false;
         }
-        return count($this->conditions) > 0;
     }
 }
