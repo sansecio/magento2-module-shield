@@ -54,8 +54,12 @@ class Report
 
     private function getPackageVersion(): string
     {
-        if (class_exists(\Composer\InstalledVersions::class)) {
-            return \Composer\InstalledVersions::getPrettyVersion('sansec/magento2-module-shield') ?? 'unknown';
+        try {
+            if (class_exists(\Composer\InstalledVersions::class)) {
+                return \Composer\InstalledVersions::getPrettyVersion('sansec/magento2-module-shield') ?? 'unknown';
+            }
+        } catch (\Exception $e) {
+            return 'unknown';
         }
         return 'unknown';
     }
