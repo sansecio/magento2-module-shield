@@ -77,6 +77,10 @@ class Rule
                 case 'strip_tags':
                     $value = strip_tags($value);
                     break;
+                case 'decode_unicode':
+                    $value = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function ($m) {
+                        return mb_convert_encoding(pack('H*', $m[1]), 'UTF-8', 'UTF-16BE');
+                    }, $value);
             }
         }
         return $value;

@@ -50,6 +50,15 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($rule->matches($request));
     }
 
+    public function testRulePreprocessDecodeUnicode()
+    {
+        $request = $this->createConfiguredMock(Http::class, ['getContent' => 'hello _\u0073\u006F\u0075r\u0063\u0065\u0044a\u0074\u0061']);
+        $rule = new Rule(new IP(), 'report', [
+            new Condition('req.body', 'contains', '_sourceData', ['decode_unicode'])
+        ]);
+        $this->assertTrue($rule->matches($request));
+    }
+
     public function testRuleWithMultipleConditions()
     {
         $request = $this->createConfiguredMock(
