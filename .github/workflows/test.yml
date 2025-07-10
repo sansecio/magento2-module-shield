@@ -1,4 +1,4 @@
-name: Unit Tests
+name: Test
 
 on: [push]
 
@@ -14,3 +14,5 @@ jobs:
       - run: composer global config http-basic.repo.magento.com ${{ secrets.MAGENTO_USERNAME }} ${{ secrets.MAGENTO_PASSWORD }}
       - run: composer install
       - run: ./vendor/bin/phpunit Test
+        env:
+          SANSEC_SHIELD_RULES_PATH: Test/fixture/testrules.json

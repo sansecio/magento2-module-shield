@@ -2,99 +2,13 @@
 
 namespace Sansec\Shield\Test\Performance;
 
-use Magento\Framework\App\RequestInterface;
 use PHPUnit\Framework\TestCase;
 use Sansec\Shield\Model\Waf;
 use Sansec\Shield\Model\Rules;
 use Sansec\Shield\Model\IP;
 use Sansec\Shield\Model\RuleFactory;
 use Sansec\Shield\Model\ConditionFactory;
-
-// Stub because Mock tracks calls and exhausts mem
-class RequestStub implements RequestInterface
-{
-    private $content;
-    private $method;
-    private $uri;
-    private $headers;
-
-    public function __construct(
-        string $content = '',
-        string $method = 'POST',
-        string $uri = '/test',
-        array $headers = []
-    ) {
-        $this->content = $content;
-        $this->method = $method;
-        $this->uri = $uri;
-        $this->headers = $headers;
-    }
-
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    public function getRequestUri()
-    {
-        return $this->uri;
-    }
-
-    public function getHeader($name)
-    {
-        return $this->headers[$name] ?? '';
-    }
-
-    public function getModuleName()
-    {
-        return '';
-    }
-    public function setModuleName($name)
-    {
-        return $this;
-    }
-    public function getActionName()
-    {
-        return '';
-    }
-    public function setActionName($name)
-    {
-        return $this;
-    }
-    public function getControllerName()
-    {
-        return '';
-    }
-    public function setControllerName($name)
-    {
-        return $this;
-    }
-    public function getParam($key, $default = null)
-    {
-        return $default;
-    }
-    public function setParams(array $params)
-    {
-        return $this;
-    }
-    public function getParams()
-    {
-        return [];
-    }
-    public function getCookie($name, $default = null)
-    {
-        return $default;
-    }
-    public function isSecure()
-    {
-        return false;
-    }
-}
+use Sansec\Shield\Test\RequestStub;
 
 class RuleMatchingTest extends TestCase
 {
