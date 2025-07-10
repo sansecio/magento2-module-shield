@@ -92,7 +92,7 @@ class Report
             ]);
             $curl->post($this->config->getReportUrl(), $data);
 
-            if ($curl->getStatus() !== 200) {
+            if (!in_array($curl->getStatus(), [200, 429])) {
                 throw new \RuntimeException(sprintf("Invalid status code: %d", $curl->getStatus()));
             }
         } catch (\Exception $e) {
