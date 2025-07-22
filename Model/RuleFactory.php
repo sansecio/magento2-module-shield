@@ -2,14 +2,20 @@
 
 namespace Sansec\Shield\Model;
 
+use Sansec\Shield\Logger\Logger;
+
 class RuleFactory
 {
     /** @var IP */
     private $ip;
 
-    public function __construct(IP $ip)
+    /** @var Logger */
+    private $logger;
+
+    public function __construct(IP $ip, Logger $logger)
     {
         $this->ip = $ip;
+        $this->logger = $logger;
     }
 
     /**
@@ -20,6 +26,7 @@ class RuleFactory
     {
         return new Rule(
             $this->ip,
+            $this->logger,
             $data['action'],
             $data['conditions'] ?? []
         );
