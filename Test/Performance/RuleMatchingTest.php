@@ -3,6 +3,7 @@
 namespace Sansec\Shield\Test\Performance;
 
 use PHPUnit\Framework\TestCase;
+use Sansec\Shield\Logger\Logger;
 use Sansec\Shield\Model\Waf;
 use Sansec\Shield\Model\Rules;
 use Sansec\Shield\Model\IP;
@@ -27,7 +28,7 @@ class RuleMatchingTest extends TestCase
         $rules->method('loadRules')->willReturn($rulesData);
 
         // Create factories with real implementations
-        $ruleFactory = new RuleFactory(new IP());
+        $ruleFactory = new RuleFactory(new IP(), $this->createMock(Logger::class));
         $conditionFactory = new ConditionFactory();
 
         $this->waf = new Waf($rules, $ruleFactory, $conditionFactory);

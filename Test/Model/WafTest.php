@@ -3,6 +3,7 @@
 namespace Sansec\Shield\Test\Model;
 
 use PHPUnit\Framework\TestCase;
+use Sansec\Shield\Logger\Logger;
 use Sansec\Shield\Model\ConditionFactory;
 use Sansec\Shield\Model\IP;
 use Sansec\Shield\Model\RuleFactory;
@@ -14,6 +15,9 @@ class WafTest extends TestCase
 {
     /** @var Waf */
     private $waf;
+
+    /** @var Logger */
+    private $logger;
 
     public function setUp(): void
     {
@@ -43,7 +47,8 @@ class WafTest extends TestCase
             '108.162.200.42',  // cloudflare
         ]);
 
-        $this->waf = new Waf($rules, new RuleFactory($ip), new ConditionFactory());
+        $this->logger = $this->createMock(Logger::class);
+        $this->waf = new Waf($rules, new RuleFactory($ip, $this->logger), new ConditionFactory());
     }
 
     /**
@@ -53,6 +58,16 @@ class WafTest extends TestCase
     {
         $request = new RequestStub($content, $method, $uri, $headers, $params, $cookies);
         $this->assertEmpty($this->waf->matchRequest($request), "Request should not match any rules");
+    }
+
+    /**
+     * @dataProvider requestDataProvider
+     */
+    public function testRulesDoNotLogAnyWarnings($content, $method, $uri, $headers, $params, $cookies)
+    {
+        $this->logger->expects($this->never())->method('warning');
+        $request = new RequestStub($content, $method, $uri, $headers, $params, $cookies);
+        $this->waf->matchRequest($request);
     }
 
     public function requestDataProvider()

@@ -3,6 +3,7 @@
 namespace Sansec\Shield\Model;
 
 use Magento\Framework\App\RequestInterface;
+use Sansec\Shield\Logger\Logger;
 
 class Rule
 {
@@ -15,13 +16,18 @@ class Rule
     /** @var IP */
     private $ip;
 
+    /** @var Logger */
+    private $logger;
+
     public function __construct(
         IP $ip,
+        Logger $logger,
         string $action,
         array $conditions = []
     ) {
-        $this->action = $action;
         $this->ip = $ip;
+        $this->logger = $logger;
+        $this->action = $action;
         $this->conditions = $conditions;
     }
 
@@ -129,6 +135,11 @@ class Rule
             }
             return count($this->conditions) > 0;
         } catch (\Throwable $e) {
+            $this->logger->warning('Failed matching rule.', [
+                'message' => $e->getMessage(),
+                'action' => $this->action,
+                'conditions' => $this->conditions
+            ]);
             return false;
         }
     }
