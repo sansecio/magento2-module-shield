@@ -44,13 +44,16 @@ class Rules
 
     public function loadRules(): array
     {
-        $rulesData = $this->flagManager->getFlagData(self::FLAG_CODE);
-        if (empty($rulesData)) {
-            return [];
-        }
         try {
-            return $this->serializer->unserialize($rulesData);
-        } catch (\InvalidArgumentException $exception) {
+            $rulesData = $this->flagManager->getFlagData(self::FLAG_CODE);
+            if (empty($rulesData)) {
+                return [];
+            }
+            if (!is_array($rulesData)) {
+                throw new \RuntimeException(); // BC: delete old flag format
+            }
+            return $rulesData;
+        } catch (\Throwable $exception) {
             $this->flagManager->deleteFlag(self::FLAG_CODE);
         }
         return [];
@@ -132,7 +135,8 @@ class Rules
             throw new \RuntimeException("Rule verification failed");
         }
 
-        $this->flagManager->saveFlag(self::FLAG_CODE, $rulesData);
-        return $this->serializer->unserialize($rulesData);
+        $rules = $this->serializer->unserialize($rulesData);
+        $this->flagManager->saveFlag(self::FLAG_CODE, $rules);
+        return $rules;
     }
 }

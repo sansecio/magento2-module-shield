@@ -2,6 +2,7 @@
 
 namespace Sansec\Shield\Model;
 
+use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\HTTP\Client\CurlFactory;
 use Magento\Framework\Serialize\SerializerInterface;
@@ -24,6 +25,9 @@ class Report
     /** @var IP */
     private $ip;
 
+    /** @var ProductMetadataInterface */
+    private $productMetadata;
+
     /** @var string[] */
     private $filteredHeaders;
 
@@ -33,6 +37,7 @@ class Report
         Logger $logger,
         SerializerInterface $serializer,
         IP $ip,
+        ProductMetadataInterface $productMetadata,
         array $filteredHeaders = []
     ) {
         $this->config = $config;
@@ -40,6 +45,7 @@ class Report
         $this->logger = $logger;
         $this->serializer = $serializer;
         $this->ip = $ip;
+        $this->productMetadata = $productMetadata;
         $this->filteredHeaders = $filteredHeaders;
     }
 
@@ -64,6 +70,16 @@ class Report
         return 'unknown';
     }
 
+    private function getProductVersion(): string
+    {
+        return sprintf(
+            '%s %s %s',
+            $this->productMetadata->getName(),
+            $this->productMetadata->getEdition(),
+            $this->productMetadata->getVersion()
+        );
+    }
+
     public function sendReport(RequestInterface $request, array $rules)
     {
         if (!$this->config->isReportEnabled()) {
@@ -80,6 +96,7 @@ class Report
                 'timestamp' => time(),
                 'rules' => $rules,
                 'version' => $this->getPackageVersion(),
+                'product_version' => $this->getProductVersion(),
                 'request' => [
                     'method'  => $request->getMethod(),
                     'uri'     => $request->getRequestUri(),
