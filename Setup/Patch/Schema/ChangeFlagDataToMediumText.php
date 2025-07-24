@@ -28,6 +28,8 @@ class ChangeFlagDataToMediumText implements SchemaPatchInterface
 
     public function apply()
     {
+        // Maintain backward compatibility with >=2.3.0 <=2.3.3.
+        // See https://github.com/magento/magento2/pull/13580
         $this->moduleDataSetup->startSetup();
         $this->moduleDataSetup->getConnection()->changeColumn(
             $this->moduleDataSetup->getTable('flag'),
