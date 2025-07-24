@@ -45,8 +45,8 @@ class Report
         $this->logger = $logger;
         $this->serializer = $serializer;
         $this->ip = $ip;
-        $this->filteredHeaders = $filteredHeaders;
         $this->productMetadata = $productMetadata;
+        $this->filteredHeaders = $filteredHeaders;
     }
 
     private function getRequestHeaders(RequestInterface $request): array
