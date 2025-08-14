@@ -51,6 +51,10 @@ class Rule
                 return count($parts) === 3 ? $request->getParam($parts[2], '') : '';
             case 'cookie':
                 return count($parts) === 3 ? $request->getCookie($parts[2], '') : '';
+            case 'post':
+                return $request->getPost()->toString();
+            case 'query':
+                return $request->getQuery()->toString();
             case 'ip':
                 return $this->ip->collectRequestIPs();
             default:
