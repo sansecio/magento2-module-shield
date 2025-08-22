@@ -106,8 +106,6 @@ class Report
                     'scheme'  => $request->getScheme(),
                     'params'  => $request->getParams(),
                     'files'   => $request->getFiles(),
-                    'post'    => $request->getPost(),
-                    'get'     => $request->getQuery(),
                 ]
             ]);
             $curl->post($this->config->getReportUrl(), $data);
