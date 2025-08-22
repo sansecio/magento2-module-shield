@@ -51,6 +51,8 @@ class Rule
                 return count($parts) === 3 ? $request->getParam($parts[2], '') : '';
             case 'cookie':
                 return count($parts) === 3 ? $request->getCookie($parts[2], '') : '';
+            case 'files':
+                return $request->getFiles()->toString();
             case 'post':
                 return $request->getPost()->toString();
             case 'query':
