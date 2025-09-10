@@ -15,9 +15,9 @@ bin/magento sansec:shield:sync-rules
 
 You can configure your license key and other settings via System → Configuration → Security → Sansec Shield.
 
-## Live reports
+## Testing & live reports
 
-You can view live reports at your [Sansec Dashboard](https://dashboard.sansec.io/d/account/shield). If you do not want reports, you can disable it via:
+Test it by visiting your store and add `?SANSEC-SHIELD-TEST` to your URL, it should give you "permission denied". You'll see your first blocked attack appear instantly on your [Shield Dashboard](https://dashboard.sansec.io/d/account/shield). If you do not want reports, you can disable it with:
 
 ```bash
 bin/magento config:set sansec_shield/general/report_enabled 0
@@ -25,7 +25,7 @@ bin/magento config:set sansec_shield/general/report_enabled 0
 
 You can always view detailed logs in `var/log/sansec_shield.log`.
 
-See for FAQs [our Shield guide](https://sansec.io/guides/sansec-shield).
+See for FAQs [our Shield guide](https://sansec.io/shield).
 
 ## License
 
