@@ -13,6 +13,7 @@ class RequestStub implements RequestInterface
     private $headers;
     private $params;
     private $cookies;
+    private $post;
 
     public function __construct(
         string $content = '',
@@ -20,7 +21,8 @@ class RequestStub implements RequestInterface
         string $uri     = '/test',
         array $headers  = [],
         array $params   = [],
-        array $cookies  = []
+        array $cookies  = [],
+        array $post     = [],
     ) {
         $this->content = $content;
         $this->method = $method;
@@ -28,6 +30,7 @@ class RequestStub implements RequestInterface
         $this->headers = $headers;
         $this->params = $params;
         $this->cookies = $cookies;
+        $this->post = new \Laminas\Stdlib\Parameters($post);
     }
 
     public function getContent()
@@ -103,5 +106,10 @@ class RequestStub implements RequestInterface
     public function isSecure()
     {
         return false;
+    }
+
+    public function getPost()
+    {
+        return $this->post;
     }
 }
