@@ -22,7 +22,7 @@ class RequestStub implements RequestInterface
         array $headers  = [],
         array $params   = [],
         array $cookies  = [],
-        array $post     = [],
+        array $post     = []
     ) {
         $this->content = $content;
         $this->method = $method;
