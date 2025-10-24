@@ -7,7 +7,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Response\HttpFactory as HttpResponseFactory;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\View\Element\TemplateFactory;
-use Sansec\Shield\Logger\Logger;
+use Psr\Log\LoggerInterface as Logger;
 use Sansec\Shield\Model\Config;
 use Sansec\Shield\Model\Report;
 use Sansec\Shield\Model\Waf;

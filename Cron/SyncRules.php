@@ -2,7 +2,7 @@
 
 namespace Sansec\Shield\Cron;
 
-use Sansec\Shield\Logger\Logger;
+use Psr\Log\LoggerInterface as Logger;
 use Sansec\Shield\Model\Config;
 use Sansec\Shield\Model\Rules;
 

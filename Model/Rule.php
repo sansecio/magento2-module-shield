@@ -3,7 +3,7 @@
 namespace Sansec\Shield\Model;
 
 use Magento\Framework\App\RequestInterface;
-use Sansec\Shield\Logger\Logger;
+use Psr\Log\LoggerInterface as Logger;
 
 class Rule
 {

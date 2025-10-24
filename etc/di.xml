@@ -50,4 +50,41 @@
             </argument>
         </arguments>
     </type>
+    <virtualType name="Sansec\Shield\Logger\VirtualHandler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/sansec_shield.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Sansec\Shield\Logger\VirtualLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Sansec\Shield\Logger\VirtualHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Sansec\Shield\Cron\SyncRules">
+        <arguments>
+            <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
+        </arguments>
+    </type>
+    <type name="Sansec\Shield\Plugin\Shield">
+        <arguments>
+            <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
+        </arguments>
+    </type>
+    <type name="Sansec\Shield\Model\RuleFactory">
+        <arguments>
+            <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
+        </arguments>
+    </type>
+    <type name="Sansec\Shield\Model\Rule">
+        <arguments>
+            <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
+        </arguments>
+    </type>
+    <type name="Sansec\Shield\Model\Report">
+        <arguments>
+            <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
+        </arguments>
+    </type>
 </config>

@@ -6,7 +6,7 @@ use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\HTTP\Client\CurlFactory;
 use Magento\Framework\Serialize\SerializerInterface;
-use Sansec\Shield\Logger\Logger;
+use Psr\Log\LoggerInterface as Logger;
 
 class Report
 {
