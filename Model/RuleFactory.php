@@ -2,7 +2,7 @@
 
 namespace Sansec\Shield\Model;
 
-use Sansec\Shield\Logger\Logger;
+use Psr\Log\LoggerInterface as Logger;
 
 class RuleFactory
 {

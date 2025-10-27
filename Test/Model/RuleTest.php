@@ -3,7 +3,7 @@
 namespace Sansec\Shield\Test\Model;
 
 use Magento\Framework\App\Request\Http;
-use Sansec\Shield\Logger\Logger;
+use Psr\Log\LoggerInterface as Logger;
 use Sansec\Shield\Model\Condition;
 use Sansec\Shield\Model\IP;
 use Sansec\Shield\Model\Rule;

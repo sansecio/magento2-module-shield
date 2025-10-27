@@ -3,7 +3,7 @@
 namespace Sansec\Shield\Test\Performance;
 
 use PHPUnit\Framework\TestCase;
-use Sansec\Shield\Logger\Logger;
+use Psr\Log\LoggerInterface as Logger;
 use Sansec\Shield\Model\Waf;
 use Sansec\Shield\Model\Rules;
 use Sansec\Shield\Model\IP;
