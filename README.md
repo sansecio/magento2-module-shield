@@ -27,6 +27,14 @@ You can always view detailed logs in `var/log/sansec_shield.log`.
 
 See for FAQs [our Shield guide](https://sansec.io/shield).
 
+## Cron
+
+Shield rules update automatically through the standard Magento cron mechanism. If you are running a standard cron setup (`bin/magento cron:run`), no further action is required.
+
+If you only run specific cron groups (`bin/magento cron:run --group <group name>`), make sure to include a cron for the `sansec` group as well.
+
+You can verify Shield rules sync every 5 minutes in `var/log/sansec_shield.log`.
+
 ## License
 
 Sansec Shield is published under the liberal [MIT license](./LICENSE).
