@@ -24,6 +24,8 @@ class IP
     {
         if ($this->requestIPs === null) {
             $requestIPs = [];
+            $seenIPs = [];
+
             foreach ($this->ipHeaders as $header) {
                 if (!isset($_SERVER[$header])) {
                     continue;
@@ -33,10 +35,13 @@ class IP
                     if (empty($ip) || $this->isPrivateIP($ip)) {
                         continue;
                     }
-                    $requestIPs[] = $ip;
+                    if (!isset($seenIPs[$ip])) {
+                        $requestIPs[] = $ip;
+                        $seenIPs[$ip] = true;
+                    }
                 }
             }
-            $this->requestIPs = array_values(array_unique($requestIPs));
+            $this->requestIPs = $requestIPs;
         }
         return $this->requestIPs;
     }
