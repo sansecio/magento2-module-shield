@@ -24,7 +24,6 @@ class IP
     {
         if ($this->requestIPs === null) {
             $requestIPs = [];
-            $seenIPs = [];
 
             foreach ($this->ipHeaders as $header) {
                 if (!isset($_SERVER[$header])) {
@@ -35,15 +34,12 @@ class IP
                     if (empty($ip) || $this->isPrivateIP($ip)) {
                         continue;
                     }
-                    if (!isset($seenIPs[$ip])) {
-                        $requestIPs[] = $ip;
-                        $seenIPs[$ip] = true;
-                    }
+                    $requestIPs[] = $ip;
                 }
             }
             $this->requestIPs = $requestIPs;
         }
-        return $this->requestIPs;
+        return array_unique($this->requestIPs);
     }
 
     public function ipMatchesCidr(string $ip, string $cidr): bool
