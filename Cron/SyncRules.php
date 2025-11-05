@@ -29,6 +29,8 @@ class SyncRules
         if (!$this->config->isEnabled()) {
             return;
         }
+
+        sleep(rand(0, 20));
         try {
             $rules = $this->rules->syncRules();
             $this->logger->info(sprintf("Finished synchronization of %d rules.", count($rules['rules'])));
