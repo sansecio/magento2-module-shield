@@ -118,7 +118,7 @@ class Report
         }
     }
 
-    public function logBlockedRequest($rule)
+    public function logBlockedRequest(Rule $rule)
     {
         $this->logger->info('Blocked request', [
             'rule' => $rule,
