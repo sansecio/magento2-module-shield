@@ -74,7 +74,10 @@ class Shield
 
         foreach ($matchedRules as $rule) {
             if ($rule->action === 'block') {
-                $this->logger->info('Blocked request', ['rule' => $rule]);
+                $this->logger->info('Blocked request', [
+                    'rule' => $rule,
+                    'ips' => $this->report->ip->collectRequestIPs()
+                ]);
                 return $this->getAccessDeniedResponse();
             }
         }

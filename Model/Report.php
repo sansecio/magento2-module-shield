@@ -10,6 +10,9 @@ use Psr\Log\LoggerInterface as Logger;
 
 class Report
 {
+    /** @var IP */
+    public $ip;
+
     /** @var Config  */
     private $config;
 
@@ -21,9 +24,6 @@ class Report
 
     /** @var SerializerInterface */
     private $serializer;
-
-    /** @var IP */
-    private $ip;
 
     /** @var ProductMetadataInterface */
     private $productMetadata;
