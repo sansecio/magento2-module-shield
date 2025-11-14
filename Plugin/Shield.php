@@ -7,7 +7,6 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Response\HttpFactory as HttpResponseFactory;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\View\Element\TemplateFactory;
-use Psr\Log\LoggerInterface as Logger;
 use Sansec\Shield\Model\Config;
 use Sansec\Shield\Model\Report;
 use Sansec\Shield\Model\Waf;
@@ -16,9 +15,6 @@ class Shield
 {
     /** @var Config */
     private $config;
-
-    /** @var Logger */
-    private $logger;
 
     /** @var Waf */
     private $waf;
@@ -34,14 +30,12 @@ class Shield
 
     public function __construct(
         Config $config,
-        Logger $logger,
         Waf $waf,
         Report $report,
         HttpResponseFactory $responseFactory,
         TemplateFactory $templateFactory
     ) {
         $this->config = $config;
-        $this->logger = $logger;
         $this->waf = $waf;
         $this->report = $report;
         $this->responseFactory = $responseFactory;
@@ -69,15 +63,11 @@ class Shield
             return $proceed($request);
         }
 
-        $this->logger->info(sprintf('Matched %d rules.', count($matchedRules)));
         $this->report->sendReport($request, $matchedRules);
 
         foreach ($matchedRules as $rule) {
             if ($rule->action === 'block') {
-                $this->logger->info('Blocked request', [
-                    'rule' => $rule,
-                    'ips' => $this->report->ip->collectRequestIPs()
-                ]);
+                $this->report->logBlockedRequest($rule);
                 return $this->getAccessDeniedResponse();
             }
         }
