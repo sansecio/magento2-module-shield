@@ -117,4 +117,13 @@ class Report
             $this->logger->error(sprintf("Failed to send report: %s", $e->getMessage()));
         }
     }
+
+    public function logBlockedRequest(RequestInterface $request, Rule $rule)
+    {
+        $this->logger->info('Blocked request', [
+            'uri'  => $request->getRequestUri(),
+            'rule' => $rule,
+            'ips'  => $this->ip->collectRequestIPs()
+        ]);
+    }
 }

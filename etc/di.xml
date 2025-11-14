@@ -67,11 +67,6 @@
             <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
         </arguments>
     </type>
-    <type name="Sansec\Shield\Plugin\Shield">
-        <arguments>
-            <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
-        </arguments>
-    </type>
     <type name="Sansec\Shield\Model\RuleFactory">
         <arguments>
             <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
