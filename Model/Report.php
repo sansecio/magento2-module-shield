@@ -10,7 +10,6 @@ use Psr\Log\LoggerInterface as Logger;
 
 class Report
 {
-
     /** @var Config  */
     private $config;
 
