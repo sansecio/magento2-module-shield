@@ -67,7 +67,7 @@ class Shield
 
         foreach ($matchedRules as $rule) {
             if ($rule->action === 'block') {
-                $this->report->logBlockedRequest($rule);
+                $this->report->logBlockedRequest($request, $rule);
                 return $this->getAccessDeniedResponse();
             }
         }

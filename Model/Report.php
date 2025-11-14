@@ -118,11 +118,12 @@ class Report
         }
     }
 
-    public function logBlockedRequest(Rule $rule)
+    public function logBlockedRequest(RequestInterface $request, Rule $rule)
     {
         $this->logger->info('Blocked request', [
+            'uri'  => $request->getRequestUri(),
             'rule' => $rule,
-            'ips' => $this->ip->collectRequestIPs()
+            'ips'  => $this->ip->collectRequestIPs()
         ]);
     }
 }
