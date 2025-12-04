@@ -35,6 +35,23 @@ If you only run specific cron groups (`bin/magento cron:run --group <group name>
 
 You can verify Shield rules sync every 5 minutes in `var/log/sansec_shield.log`.
 
+## Upgrading
+
+The Sansec Shield module is deliberately kept stable and there is no need to monitor for updates. If an essential new version is released, we will notify you via email.
+
+To check your current version:
+
+```bash
+composer show sansec/magento2-module-shield
+```
+
+To upgrade to the latest version:
+
+```bash
+composer require sansec/magento2-module-shield:^1.0
+bin/magento setup:upgrade
+```
+
 ## License
 
 Sansec Shield is published under the liberal [MIT license](./LICENSE).
