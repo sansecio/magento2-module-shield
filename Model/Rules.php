@@ -2,10 +2,13 @@
 
 namespace Sansec\Shield\Model;
 
-use Magento\Framework\FlagManager;
+use Magento\Framework\Flag;
+use Magento\Framework\Flag\FlagResource;
+use Magento\Framework\FlagFactory;
 use Magento\Framework\HTTP\Client\CurlFactory;
 use Magento\Framework\Module\Dir;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\Module\Dir\Reader as ModuleDirReader;
 
 class Rules
@@ -16,8 +19,11 @@ class Rules
     /** @var Config */
     private $config;
 
-    /** @var FlagManager */
-    private $flagManager;
+    /** @var FlagFactory */
+    private $flagFactory;
+
+    /** @var FlagResource */
+    private $flagResource;
 
     /** @var SerializerInterface */
     private $serializer;
@@ -28,24 +34,31 @@ class Rules
     /** @var ModuleDirReader */
     private $moduleDirReader;
 
+    /** @var DateTime */
+    private $dateTime;
+
     public function __construct(
         Config $config,
-        FlagManager $flagManager,
+        FlagFactory $flagFactory,
+        FlagResource $flagResource,
         SerializerInterface $serializer,
         CurlFactory $curlFactory,
-        ModuleDirReader $moduleDirReader
+        ModuleDirReader $moduleDirReader,
+        DateTime $dateTime
     ) {
         $this->config = $config;
-        $this->flagManager = $flagManager;
+        $this->flagFactory = $flagFactory;
+        $this->flagResource = $flagResource;
         $this->serializer = $serializer;
         $this->curlFactory = $curlFactory;
         $this->moduleDirReader = $moduleDirReader;
+        $this->dateTime = $dateTime;
     }
 
     public function loadRules(): array
     {
         try {
-            $rulesData = $this->flagManager->getFlagData(self::FLAG_CODE);
+            $rulesData = $this->loadFlag()->getFlagData();
             if (empty($rulesData)) {
                 return [];
             }
@@ -54,7 +67,7 @@ class Rules
             }
             return $rulesData;
         } catch (\Throwable $exception) {
-            $this->flagManager->deleteFlag(self::FLAG_CODE);
+            $this->deleteFlag();
         }
         return [];
     }
@@ -70,7 +83,7 @@ class Rules
                 case 401:
                     throw new \RuntimeException("Invalid license key, please check configuration.");
                 case 403:
-                    $this->flagManager->deleteFlag(self::FLAG_CODE);
+                    $this->deleteFlag();
                     throw new \RuntimeException($curl->getBody());
                 default:
                     throw new \RuntimeException("Invalid status code {$curl->getStatus()}");
@@ -136,7 +149,30 @@ class Rules
         }
 
         $rules = $this->serializer->unserialize($rulesData);
-        $this->flagManager->saveFlag(self::FLAG_CODE, $rules);
+        $this->saveFlag($rules);
         return $rules;
+    }
+
+    private function loadFlag(): Flag
+    {
+        $flag = $this->flagFactory->create(['data' => ['flag_code' => self::FLAG_CODE]]);
+        $this->flagResource->load($flag, self::FLAG_CODE, 'flag_code');
+        return $flag;
+    }
+
+    private function saveFlag(array $rules): void
+    {
+        $flag = $this->loadFlag();
+        $flag->setFlagData($rules);
+        $flag->setData('last_update', $this->dateTime->gmtDate());
+        $this->flagResource->save($flag);
+    }
+
+    private function deleteFlag(): void
+    {
+        $flag = $this->loadFlag();
+        if ($flag->getId()) {
+            $this->flagResource->delete($flag);
+        }
     }
 }
