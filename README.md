@@ -52,6 +52,26 @@ composer require sansec/magento2-module-shield:^1.0
 bin/magento setup:upgrade
 ```
 
+## Troubleshooting
+
+### "Please enable the module and configure the license key"
+
+If you get this error when running `bin/magento sansec:shield:sync-rules`, even though the license key is already configured, flush the Magento cache:
+
+```bash
+bin/magento cache:flush
+```
+
+Then retry the sync command.
+
+### "There are no commands defined in the sansec:shield namespace"
+
+Run the Magento dependency injection compiler:
+
+```bash
+bin/magento setup:di:compile
+```
+
 ## License
 
 Sansec Shield is published under the liberal [MIT license](./LICENSE).
