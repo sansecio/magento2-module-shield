@@ -72,7 +72,7 @@ Run the Magento dependency injection compiler:
 bin/magento setup:di:compile
 ```
 
-### Composer upgrades many unrelated packages during installation
+### Composer upgrades unrelated packages during installation
 
 Shield's only dependency is `magento/framework`, so it will not pull in or force any additional upgrades. If you see many packages being upgraded, your `vendor/` directory was out of sync with `composer.lock`. Running `composer require` synced your vendor directory to match.
 
