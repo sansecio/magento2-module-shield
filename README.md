@@ -72,6 +72,19 @@ Run the Magento dependency injection compiler:
 bin/magento setup:di:compile
 ```
 
+### Composer upgrades many unrelated packages during installation
+
+Shield's only dependency is `magento/framework`, so it will not pull in or force any additional upgrades. If you see many packages being upgraded, your `vendor/` directory was out of sync with `composer.lock`. Running `composer require` synced your vendor directory to match.
+
+To avoid this, revert `composer.lock` to a version that matches your current vendor directory before installing Shield:
+
+```bash
+git checkout composer.lock
+composer require sansec/magento2-module-shield
+```
+
+If installing via Composer is not an option, you can copy the source files directly into `app/code/Sansec/Shield`, though you will need to handle updates manually from that point on.
+
 ## License
 
 Sansec Shield is published under the liberal [MIT license](./LICENSE).
