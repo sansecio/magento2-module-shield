@@ -2,6 +2,7 @@
 
 namespace Sansec\Shield\Console\Command;
 
+use Magento\Framework\Console\Cli;
 use Sansec\Shield\Model\Config;
 use Sansec\Shield\Model\Rules;
 use Symfony\Component\Console\Command\Command;
@@ -34,16 +35,17 @@ class SyncRules extends Command
     {
         if (!$this->config->isEnabled()) {
             $output->writeln("Please enable the module and configure the license key.");
-            return;
+            return Cli::RETURN_FAILURE;
         }
 
         $output->writeln('Synchronizing rules...');
         try {
             $rules = $this->rules->syncRules();
             $output->writeln(sprintf("Finished synchronization of %d rules.", count($rules['rules'])));
+            return Cli::RETURN_SUCCESS;
         } catch (\Exception $e) {
             $output->writeln($e->getMessage());
+            return Cli::RETURN_FAILURE;
         }
-        return 0;
     }
 }
