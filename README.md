@@ -85,6 +85,10 @@ composer require sansec/magento2-module-shield
 
 If installing via Composer is not an option, you can copy the source files directly into `app/code/Sansec/Shield`, though you will need to handle updates manually from that point on.
 
+### Cron job not running on symlink-based deployments
+
+Magento's `cron:install` resolves symlinks to their real path, so after a new deployment the crontab still points to the old release directory. Ensure that the crontab uses your stable symlink (e.g. /data/web/current/bin/magento) instead.
+
 ## License
 
 Sansec Shield is published under the liberal [MIT license](./LICENSE).
