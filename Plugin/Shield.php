@@ -8,6 +8,7 @@ use Magento\Framework\App\Response\HttpFactory as HttpResponseFactory;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\View\Element\TemplateFactory;
 use Sansec\Shield\Model\Config;
+use Sansec\Shield\Model\IP;
 use Sansec\Shield\Model\Report;
 use Sansec\Shield\Model\Waf;
 
@@ -22,6 +23,9 @@ class Shield
     /** @var Report */
     private $report;
 
+    /** @var IP */
+    private $ip;
+
     /** @var HttpResponseFactory */
     private $responseFactory;
 
@@ -32,14 +36,30 @@ class Shield
         Config $config,
         Waf $waf,
         Report $report,
+        IP $ip,
         HttpResponseFactory $responseFactory,
         TemplateFactory $templateFactory
     ) {
         $this->config = $config;
         $this->waf = $waf;
         $this->report = $report;
+        $this->ip = $ip;
         $this->responseFactory = $responseFactory;
         $this->templateFactory = $templateFactory;
+    }
+
+    private function isRequestWhitelisted(): bool
+    {
+        $whitelisted = $this->config->getWhitelistedIps();
+        if (empty($whitelisted)) {
+            return false;
+        }
+        foreach ($this->ip->collectRequestIPs() as $ip) {
+            if (in_array($ip, $whitelisted, true)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function getAccessDeniedResponse(): ResponseInterface
@@ -55,6 +75,10 @@ class Shield
     public function aroundDispatch(FrontControllerInterface $subject, callable $proceed, RequestInterface $request)
     {
         if (!$this->config->isEnabled()) {
+            return $proceed($request);
+        }
+
+        if ($this->isRequestWhitelisted()) {
             return $proceed($request);
         }
 
