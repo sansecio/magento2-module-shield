@@ -3,7 +3,9 @@
 namespace Sansec\Shield\Test\Plugin;
 
 use Magento\Framework\App\FrontControllerInterface;
+use Magento\Framework\App\Response\Http as HttpResponse;
 use Magento\Framework\App\Response\HttpFactory as HttpResponseFactory;
+use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\TemplateFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -48,7 +50,32 @@ class ShieldTest extends TestCase
         return $ip;
     }
 
-    public function testRulesMatchWhenIpIsNotWhitelisted()
+    private function buildPlugin(IP $ip, array $whitelistedIps): Shield
+    {
+        $config = $this->createMock(Config::class);
+        $config->method('isEnabled')->willReturn(true);
+        $config->method('getWhitelistedIps')->willReturn($whitelistedIps);
+
+        $template = $this->createMock(Template::class);
+        $template->method('setTemplate')->willReturnSelf();
+        $template->method('toHtml')->willReturn('');
+        $templateFactory = $this->createMock(TemplateFactory::class);
+        $templateFactory->method('create')->willReturn($template);
+
+        $responseFactory = $this->createMock(HttpResponseFactory::class);
+        $responseFactory->method('create')->willReturn($this->createMock(HttpResponse::class));
+
+        return new Shield(
+            $config,
+            $this->buildWaf($ip),
+            $this->createMock(Report::class),
+            $ip,
+            $responseFactory,
+            $templateFactory
+        );
+    }
+
+    public function testRulesMatchBaseline()
     {
         // Proves the rules in buildWaf() actually match this request IP, so the bypass test below isn't passing vacuously.
         $waf = $this->buildWaf($this->buildIp());
@@ -57,20 +84,7 @@ class ShieldTest extends TestCase
 
     public function testWhitelistedIpBypassesBlockingRules()
     {
-        $ip = $this->buildIp();
-
-        $config = $this->createMock(Config::class);
-        $config->method('isEnabled')->willReturn(true);
-        $config->method('getWhitelistedIps')->willReturn([self::WHITELISTED_IP]);
-
-        $plugin = new Shield(
-            $config,
-            $this->buildWaf($ip),
-            $this->createMock(Report::class),
-            $ip,
-            $this->createMock(HttpResponseFactory::class),
-            $this->createMock(TemplateFactory::class)
-        );
+        $plugin = $this->buildPlugin($this->buildIp(), [self::WHITELISTED_IP]);
 
         $proceedCalled = false;
         $proceed = function () use (&$proceedCalled) {
@@ -84,5 +98,23 @@ class ShieldTest extends TestCase
         );
 
         $this->assertTrue($proceedCalled);
+    }
+
+    public function testNonWhitelistedIpIsStillBlocked()
+    {
+        $plugin = $this->buildPlugin($this->buildIp(), ['198.51.100.1']);
+
+        $proceedCalled = false;
+        $proceed = function () use (&$proceedCalled) {
+            $proceedCalled = true;
+        };
+
+        $plugin->aroundDispatch(
+            $this->createMock(FrontControllerInterface::class),
+            $proceed,
+            new RequestStub()
+        );
+
+        $this->assertFalse($proceedCalled);
     }
 }
