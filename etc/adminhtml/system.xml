@@ -20,6 +20,10 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>When this is enabled, blocked requests are reported to the eComscan dashboard.</comment>
                 </field>
+                <field id="whitelisted_ips" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Whitelisted IP Addresses</label>
+                    <comment>One IP address per line. Requests from these IPs bypass Shield checks. Ensure client IP headers are correctly set by your proxy/webserver.</comment>
+                </field>
             </group>
         </section>
     </system>

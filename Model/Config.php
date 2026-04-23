@@ -11,6 +11,7 @@ class Config
     private const XML_PATH_RULES_URL = 'sansec_shield/general/rules_url';
     private const XML_PATH_REPORT_ENABLED = 'sansec_shield/general/report_enabled';
     private const XML_PATH_REPORT_URL = 'sansec_shield/general/report_url';
+    private const XML_PATH_WHITELISTED_IPS = 'sansec_shield/general/whitelisted_ips';
 
     /** @var ScopeConfigInterface */
     private $config;
@@ -44,5 +45,12 @@ class Config
     public function getReportUrl(): string
     {
         return $this->config->getValue(self::XML_PATH_REPORT_URL);
+    }
+
+    /** @return string[] */
+    public function getWhitelistedIps(): array
+    {
+        $raw = (string) $this->config->getValue(self::XML_PATH_WHITELISTED_IPS);
+        return array_values(array_filter(array_map('trim', preg_split('/\R/', $raw))));
     }
 }
