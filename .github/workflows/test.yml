@@ -14,6 +14,6 @@ jobs:
       - uses: actions/checkout@v3
       - run: composer global config http-basic.repo.magento.com ${{ secrets.MAGENTO_USERNAME }} ${{ secrets.MAGENTO_PASSWORD }}
       - run: composer install
-      - run: ./vendor/bin/phpunit Test
+      - run: ./vendor/bin/phpunit --fail-on-warning Test
         env:
           SANSEC_SHIELD_RULES_PATH: Test/fixture/testrules.json
