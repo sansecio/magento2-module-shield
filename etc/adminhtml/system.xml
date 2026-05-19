@@ -22,7 +22,7 @@
                 </field>
                 <field id="whitelisted_ips" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Whitelisted IP Addresses</label>
-                    <comment>One IP address per line. Requests from these IPs bypass Shield checks. Ensure client IP headers are correctly set by your proxy/webserver.</comment>
+                    <comment>One IP address per line. Requests from these IPs bypass Shield checks. Matches the connecting peer only (REMOTE_ADDR); proxy-forwarded headers are intentionally ignored.</comment>
                 </field>
             </group>
         </section>

@@ -20,6 +20,12 @@ class IP
         return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false;
     }
 
+    public function getRemoteAddr(): ?string
+    {
+        $remote = isset($_SERVER['REMOTE_ADDR']) ? trim((string) $_SERVER['REMOTE_ADDR']) : '';
+        return $remote === '' ? null : $remote;
+    }
+
     public function collectRequestIPs(): array
     {
         if ($this->requestIPs === null) {
