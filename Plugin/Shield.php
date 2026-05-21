@@ -54,12 +54,11 @@ class Shield
         if (empty($whitelisted)) {
             return false;
         }
-        foreach ($this->ip->collectRequestIPs() as $ip) {
-            if (in_array($ip, $whitelisted, true)) {
-                return true;
-            }
+        $remoteAddr = $this->ip->getRemoteAddr();
+        if ($remoteAddr === null) {
+            return false;
         }
-        return false;
+        return in_array($remoteAddr, $whitelisted, true);
     }
 
     private function getAccessDeniedResponse(): ResponseInterface

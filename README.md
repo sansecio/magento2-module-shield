@@ -15,6 +15,12 @@ bin/magento sansec:shield:sync-rules
 
 You can configure your license key and other settings via System → Configuration → Security → Sansec Shield.
 
+### Whitelisted IP addresses
+
+IPs listed under *Whitelisted IP Addresses* bypass all Shield checks. Matching is performed against the connecting peer (`REMOTE_ADDR`) only; proxy-forwarded headers such as `X-Forwarded-For` and `CF-Connecting-IP` are intentionally ignored because they are client-controlled and can be spoofed.
+
+If your store sits behind a reverse proxy or CDN, configure your webserver to rewrite the trusted proxy header into `REMOTE_ADDR` ([`ngx_http_realip_module`](https://nginx.org/en/docs/http/ngx_http_realip_module.html) on nginx, [`mod_remoteip`](https://httpd.apache.org/docs/2.4/mod/mod_remoteip.html) on Apache). Once `REMOTE_ADDR` reflects the real client IP, the whitelist will match it correctly.
+
 ## Testing & live reports
 
 Test it by visiting your store and add `?SANSEC-SHIELD-TEST` to your URL, it should give you "permission denied". You'll see your first blocked attack appear instantly on your [Shield Dashboard](https://dashboard.sansec.io/d/account/shield). If you do not want reports, you can disable it with:
