@@ -31,7 +31,7 @@ class SyncRules extends Command
         parent::configure();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->config->isEnabled()) {
             $output->writeln("Please enable the module and configure the license key.");
