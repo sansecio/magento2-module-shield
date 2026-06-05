@@ -31,7 +31,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     public function testRuleNetwork()
     {
         $ipMock = $this->getMockBuilder(IP::class)
-            ->onlyMethods(['collectRequestIPs'])
+            ->setMethods(['collectRequestIPs'])
             ->getMock();
 
         $ipMock->method('collectRequestIPs')->willReturn(['123.123.123.123']);

@@ -27,7 +27,6 @@ namespace Sansec\Shield\Test\Plugin {
     use Magento\Framework\App\FrontControllerInterface;
     use Magento\Framework\App\Response\HttpFactory as HttpResponseFactory;
     use Magento\Framework\View\Element\TemplateFactory;
-    use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
     use PHPUnit\Framework\TestCase;
     use Sansec\Shield\Model\Config;
     use Sansec\Shield\Model\IP;
@@ -51,7 +50,7 @@ namespace Sansec\Shield\Test\Plugin {
             $_SERVER = $this->serverBackup;
         }
 
-        private function buildPlugin(array $whitelistedIps, InvocationOrder $expectedWafCalls): Shield
+        private function buildPlugin(array $whitelistedIps, $expectedWafCalls): Shield
         {
             $config = $this->createMock(Config::class);
             $config->method('isEnabled')->willReturn(true);

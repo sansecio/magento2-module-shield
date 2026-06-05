@@ -6,6 +6,9 @@ class SerializerTest extends \PHPUnit\Framework\TestCase
 {
     public function testNoExceptionWithInvalidUtf8()
     {
+        if (PHP_VERSION_ID < 70200) {
+            $this->markTestSkipped('Invalid-UTF-8 substitution needs JSON_INVALID_UTF8_SUBSTITUTE (PHP 7.2+).');
+        }
         $serializer = new \Sansec\Shield\Model\Serializer();
         $result = $serializer->serialize(['key' => "\xB1\x31"]);
         $this->assertEquals(JSON_ERROR_NONE, json_last_error());
