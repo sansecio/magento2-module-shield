@@ -1,6 +1,6 @@
 # Sansec Shield
 
-Requires Magento 2.3+, PHP 7.2+ and an [eComscan account](https://sansec.io/pricing) (Advanced or up).
+Requires Magento 2.1+, PHP 7.2+ and an [eComscan account](https://sansec.io/pricing) (Advanced or up).
 
 ## Installation
 

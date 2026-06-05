@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: '7.1'
           extensions: gd, mcrypt, curl, intl, xsl, mbstring, openssl, zip, soap, bcmath
           tools: composer:2.9.8
       - uses: actions/checkout@v3

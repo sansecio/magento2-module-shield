@@ -3,7 +3,7 @@
   "type": "magento2-module",
   "license": "MIT",
   "require": {
-    "php": ">=7.2",
+    "php": ">=7.1",
     "magento/framework": "*",
     "ext-openssl": "*"
   },

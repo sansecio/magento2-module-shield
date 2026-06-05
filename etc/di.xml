@@ -37,15 +37,10 @@
             </argument>
         </arguments>
     </type>
-    <virtualType name="Sansec\Shield\Logger\VirtualHandler" type="Magento\Framework\Logger\Handler\Base">
-        <arguments>
-            <argument name="fileName" xsi:type="string">/var/log/sansec_shield.log</argument>
-        </arguments>
-    </virtualType>
     <virtualType name="Sansec\Shield\Logger\VirtualLogger" type="Magento\Framework\Logger\Monolog">
         <arguments>
             <argument name="handlers" xsi:type="array">
-                <item name="system" xsi:type="object">Sansec\Shield\Logger\VirtualHandler</item>
+                <item name="system" xsi:type="object">Sansec\Shield\Logger\Handler</item>
             </argument>
         </arguments>
     </virtualType>
