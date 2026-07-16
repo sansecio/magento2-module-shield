@@ -98,33 +98,60 @@ class Rule
         return $value;
     }
 
-    private function targetValueMatchesCondition($value, Condition $condition): bool
+    private function extractScalarValues($value): array
     {
-        $matches = false;
+        if (!is_array($value)) {
+            return is_scalar($value) ? [(string)$value] : [];
+        }
+
+        $values = [];
+        foreach ($value as $item) {
+            foreach ($this->extractScalarValues($item) as $scalarValue) {
+                $values[] = $scalarValue;
+            }
+        }
+        return $values;
+    }
+
+    private function scalarValueMatchesCondition(string $value, Condition $condition): bool
+    {
+        if (strlen($value) > 0) {
+            $value = $this->preprocessTargetValue($value, $condition);
+        }
+
         switch ($condition->type) {
             case 'regex':
-                $matches = (bool)preg_match('/' . str_replace('/', '\/', $condition->value) . '/', $value);
-                break;
+                return (bool)preg_match('/' . str_replace('/', '\/', $condition->value) . '/', $value);
             case 'contains':
-                $matches = strpos($value, $condition->value) !== false;
-                break;
+                return strpos($value, $condition->value) !== false;
             case 'equals':
-                if (is_array($value)) {
-                    $matches = in_array($condition->value, $value);
-                } else {
-                    $matches = strcmp($value, $condition->value) === 0;
-                }
-                break;
-            case 'network':
-                foreach ($value as $ip) {
-                    if ($this->ip->ipMatchesCidr($ip, $condition->value)) {
-                        $matches = true;
-                        break;
-                    }
-                }
-                break;
+                return strcmp($value, $condition->value) === 0;
+            default:
+                return false;
         }
-        return $matches;
+    }
+
+    private function targetValueMatchesCondition($value, Condition $condition): bool
+    {
+        if ($condition->type === 'network') {
+            if (!is_array($value)) {
+                return false;
+            }
+
+            foreach ($value as $ip) {
+                if ($this->ip->ipMatchesCidr($ip, $condition->value)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        foreach ($this->extractScalarValues($value) as $scalarValue) {
+            if ($this->scalarValueMatchesCondition($scalarValue, $condition)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function matches(RequestInterface $request): bool
@@ -132,9 +159,6 @@ class Rule
         try {
             foreach ($this->conditions as $condition) {
                 $value = $this->extractTargetValue($condition->target, $request);
-                if (is_string($value) && strlen($value) > 0) {
-                    $value = $this->preprocessTargetValue($value, $condition);
-                }
                 if (empty($value) || !$this->targetValueMatchesCondition($value, $condition)) {
                     return false;
                 }
