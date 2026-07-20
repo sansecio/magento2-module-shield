@@ -28,6 +28,72 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($rule->matches($request));
     }
 
+    public function testRuleContainsMatchesArrayParam()
+    {
+        $logger = $this->createMock(Logger::class);
+        $logger->expects($this->never())->method('warning');
+        $request = $this->createConfiguredMock(Http::class, [
+            'getParam' => ['safe', 'hack1337']
+        ]);
+        $rule = new Rule(new IP(), $logger, 'block', [
+            new Condition('req.param.X', 'contains', '1337')
+        ]);
+
+        $this->assertTrue($rule->matches($request));
+    }
+
+    public function testRuleRegexMatchesNestedArrayParam()
+    {
+        $logger = $this->createMock(Logger::class);
+        $logger->expects($this->never())->method('warning');
+        $request = $this->createConfiguredMock(Http::class, [
+            'getParam' => ['nested' => ['safe', 'hack1337']]
+        ]);
+        $rule = new Rule(new IP(), $logger, 'block', [
+            new Condition('req.param.X', 'regex', 'hack\d+')
+        ]);
+
+        $this->assertTrue($rule->matches($request));
+    }
+
+    public function testRulePreprocessesEachArrayParamValue()
+    {
+        $request = $this->createConfiguredMock(Http::class, [
+            'getParam' => ['safe', 'HACK1337']
+        ]);
+        $rule = new Rule(new IP(), $this->createMock(Logger::class), 'block', [
+            new Condition('req.param.X', 'contains', 'hack1337', ['strtolower'])
+        ]);
+
+        $this->assertTrue($rule->matches($request));
+    }
+
+    public function testRuleEqualsMatchesNestedArrayParam()
+    {
+        $request = $this->createConfiguredMock(Http::class, [
+            'getParam' => ['nested' => ['safe', 'hack1337']]
+        ]);
+        $rule = new Rule(new IP(), $this->createMock(Logger::class), 'block', [
+            new Condition('req.param.X', 'equals', 'hack1337')
+        ]);
+
+        $this->assertTrue($rule->matches($request));
+    }
+
+    public function testRuleDoesNotMatchArrayParamWithoutMatchingValue()
+    {
+        $logger = $this->createMock(Logger::class);
+        $logger->expects($this->never())->method('warning');
+        $request = $this->createConfiguredMock(Http::class, [
+            'getParam' => ['safe', ['also-safe']]
+        ]);
+        $rule = new Rule(new IP(), $logger, 'block', [
+            new Condition('req.param.X', 'contains', '1337')
+        ]);
+
+        $this->assertFalse($rule->matches($request));
+    }
+
     public function testRuleNetwork()
     {
         $ipMock = $this->getMockBuilder(IP::class)
