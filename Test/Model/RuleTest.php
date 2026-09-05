@@ -146,6 +146,27 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($rule->matches($request));
     }
 
+    public function testRuleRegexLogsAndFailsOpenOnPcreError()
+    {
+        $originalBacktrackLimit = ini_get('pcre.backtrack_limit');
+        ini_set('pcre.backtrack_limit', '1');
+
+        try {
+            $logger = $this->createMock(Logger::class);
+            $logger->expects($this->once())->method('warning');
+            $request = $this->createConfiguredMock(Http::class, [
+                'getContent' => str_repeat('a', 50) . 'X'
+            ]);
+            $rule = new Rule(new IP(), $logger, 'block', [
+                new Condition('req.body', 'regex', '(a+)+$')
+            ]);
+
+            $this->assertFalse($rule->matches($request));
+        } finally {
+            ini_set('pcre.backtrack_limit', $originalBacktrackLimit);
+        }
+    }
+
     public function testRuleWithoutConditions()
     {
         $rule = new Rule(new IP(), $this->createMock(Logger::class), 'block', []);

@@ -121,7 +121,11 @@ class Rule
 
         switch ($condition->type) {
             case 'regex':
-                return (bool)preg_match('/' . str_replace('/', '\/', $condition->value) . '/', $value);
+                $result = preg_match('/' . str_replace('/', '\/', $condition->value) . '/', $value);
+                if ($result === false) {
+                    $this->logPcreFailure($condition);
+                }
+                return (bool)$result;
             case 'contains':
                 return strpos($value, $condition->value) !== false;
             case 'equals':
@@ -129,6 +133,15 @@ class Rule
             default:
                 return false;
         }
+    }
+
+    private function logPcreFailure(Condition $condition): void
+    {
+        $this->logger->warning('Regex condition failed with a PCRE error.', [
+            'error' => function_exists('preg_last_error_msg') ? preg_last_error_msg() : preg_last_error(),
+            'target' => $condition->target,
+            'pattern' => $condition->value
+        ]);
     }
 
     private function targetValueMatchesCondition($value, Condition $condition): bool
