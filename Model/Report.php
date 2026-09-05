@@ -5,11 +5,14 @@ namespace Sansec\Shield\Model;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\HTTP\Client\CurlFactory;
+use Magento\Framework\MessageQueue\PublisherInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Psr\Log\LoggerInterface as Logger;
 
 class Report
 {
+    public const TOPIC_REPORT = 'sansec.shield.report';
+
     /** @var Config  */
     private $config;
 
@@ -37,6 +40,9 @@ class Report
     /** @var bool */
     private $shutdownRegistered = false;
 
+    /** @var PublisherInterface */
+    private $publisher;
+
     public function __construct(
         Config $config,
         CurlFactory $curlFactory,
@@ -44,6 +50,7 @@ class Report
         SerializerInterface $serializer,
         IP $ip,
         ProductMetadataInterface $productMetadata,
+        PublisherInterface $publisher,
         array $filteredHeaders = []
     ) {
         $this->config = $config;
@@ -52,6 +59,7 @@ class Report
         $this->serializer = $serializer;
         $this->ip = $ip;
         $this->productMetadata = $productMetadata;
+        $this->publisher = $publisher;
         $this->filteredHeaders = $filteredHeaders;
     }
 
@@ -154,6 +162,27 @@ class Report
         if (!$this->shutdownRegistered) {
             $this->shutdownRegistered = true;
             register_shutdown_function([$this, 'flushDeferredReports']);
+        }
+    }
+
+    public function publishReport(RequestInterface $request, array $rules)
+    {
+        if (!$this->config->isReportEnabled()) {
+            return;
+        }
+        try {
+            $this->publisher->publish(self::TOPIC_REPORT, $this->buildPayload($request, $rules));
+        } catch (\Exception $e) {
+            $this->logFailure($e);
+        }
+    }
+
+    public function sendPayload(string $payload)
+    {
+        try {
+            $this->postPayload($payload);
+        } catch (\Exception $e) {
+            $this->logFailure($e);
         }
     }
 

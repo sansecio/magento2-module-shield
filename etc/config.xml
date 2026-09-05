@@ -9,6 +9,7 @@
 
                 <report_enabled>1</report_enabled>
                 <report_url>https://shield.sansec.io/v1/shield/report</report_url>
+                <report_transport>direct</report_transport>
             </general>
         </sansec_shield>
     </default>

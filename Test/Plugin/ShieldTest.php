@@ -59,11 +59,13 @@ namespace Sansec\Shield\Test\Plugin {
             array $whitelistedIps,
             InvocationOrder $expectedWafCalls,
             array $matchedRules = [],
-            ?Report $report = null
+            ?Report $report = null,
+            string $reportTransport = Config::REPORT_TRANSPORT_DIRECT
         ): Shield {
             $config = $this->createMock(Config::class);
             $config->method('isEnabled')->willReturn(true);
             $config->method('getWhitelistedIps')->willReturn($whitelistedIps);
+            $config->method('getReportTransport')->willReturn($reportTransport);
 
             $waf = $this->createMock(Waf::class);
             $waf->expects($expectedWafCalls)->method('matchRequest')->willReturn($matchedRules);
@@ -160,6 +162,36 @@ namespace Sansec\Shield\Test\Plugin {
 
             $plugin = $this->buildPlugin([], $this->once(), [$rule], $report);
             $this->assertFalse($this->dispatch($plugin));
+        }
+
+        public function testQueueTransportPublishesTheReport()
+        {
+            $_SERVER['REMOTE_ADDR'] = '203.0.113.42';
+
+            $rule = new Rule(new IP(), $this->createMock(Logger::class), 'report');
+            $report = $this->createMock(Report::class);
+            $report->expects($this->never())->method('sendReportDeferred');
+            $report->expects($this->never())->method('sendReport');
+            $report->expects($this->once())->method('publishReport')->with(
+                $this->isInstanceOf(RequestStub::class),
+                [$rule]
+            );
+
+            $plugin = $this->buildPlugin([], $this->once(), [$rule], $report, Config::REPORT_TRANSPORT_QUEUE);
+            $this->assertTrue($this->dispatch($plugin));
+        }
+
+        public function testDirectTransportDefersTheReport()
+        {
+            $_SERVER['REMOTE_ADDR'] = '203.0.113.42';
+
+            $rule = new Rule(new IP(), $this->createMock(Logger::class), 'report');
+            $report = $this->createMock(Report::class);
+            $report->expects($this->never())->method('publishReport');
+            $report->expects($this->once())->method('sendReportDeferred');
+
+            $plugin = $this->buildPlugin([], $this->once(), [$rule], $report, Config::REPORT_TRANSPORT_DIRECT);
+            $this->assertTrue($this->dispatch($plugin));
         }
     }
 }
