@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/consumer.xsd">
+    <consumer name="sansec.shield.report" queue="sansec.shield.report"
+              handler="Sansec\Shield\Model\Report\Consumer::process" maxMessages="1000"/>
+</config>

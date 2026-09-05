@@ -86,7 +86,11 @@ class Shield
             return $proceed($request);
         }
 
-        $this->report->sendReport($request, $matchedRules);
+        if ($this->config->getReportTransport() === Config::REPORT_TRANSPORT_QUEUE) {
+            $this->report->publishReport($request, $matchedRules);
+        } else {
+            $this->report->sendReportDeferred($request, $matchedRules);
+        }
 
         foreach ($matchedRules as $rule) {
             if ($rule->action === 'block') {
