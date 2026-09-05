@@ -9,7 +9,7 @@
         </arguments>
     </type>
     <type name="Magento\Framework\App\FrontControllerInterface">
-        <plugin name="sansec_shield" type="Sansec\Shield\Plugin\Shield"/>
+        <plugin name="sansec_shield" type="Sansec\Shield\Plugin\Shield" sortOrder="100"/>
     </type>
     <type name="Sansec\Shield\Model\Rules">
         <arguments>
