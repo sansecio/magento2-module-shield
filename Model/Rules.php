@@ -2,6 +2,7 @@
 
 namespace Sansec\Shield\Model;
 
+use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Flag;
 use Magento\Framework\Flag\FlagResource;
 use Magento\Framework\FlagFactory;
@@ -15,6 +16,9 @@ class Rules
 {
     private const PROTOCOL_VERSION = '1';
     private const FLAG_CODE = 'sansec_shield_rules';
+    private const CACHE_KEY = 'sansec_shield_rules';
+    private const CACHE_TAG = 'SANSEC_SHIELD';
+    private const CACHE_LIFETIME = 300;
 
     /** @var Config */
     private $config;
@@ -37,6 +41,9 @@ class Rules
     /** @var DateTime */
     private $dateTime;
 
+    /** @var CacheInterface */
+    private $cache;
+
     public function __construct(
         Config $config,
         FlagFactory $flagFactory,
@@ -44,7 +51,8 @@ class Rules
         SerializerInterface $serializer,
         CurlFactory $curlFactory,
         ModuleDirReader $moduleDirReader,
-        DateTime $dateTime
+        DateTime $dateTime,
+        CacheInterface $cache
     ) {
         $this->config = $config;
         $this->flagFactory = $flagFactory;
@@ -53,9 +61,52 @@ class Rules
         $this->curlFactory = $curlFactory;
         $this->moduleDirReader = $moduleDirReader;
         $this->dateTime = $dateTime;
+        $this->cache = $cache;
     }
 
     public function loadRules(): array
+    {
+        $rules = $this->loadRulesFromCache();
+        if ($rules !== null) {
+            return $rules;
+        }
+
+        $rules = $this->loadRulesFromFlag();
+        if ($rules !== []) {
+            try {
+                $this->saveRulesToCache($rules);
+            } catch (\Throwable $exception) {
+                return $rules;
+            }
+        }
+        return $rules;
+    }
+
+    private function loadRulesFromCache(): ?array
+    {
+        try {
+            $rulesData = $this->cache->load(self::CACHE_KEY);
+            if (!is_string($rulesData) || $rulesData === '') {
+                return null;
+            }
+            $rules = $this->serializer->unserialize($rulesData);
+        } catch (\Throwable $exception) {
+            return null;
+        }
+        return is_array($rules) && $rules !== [] ? $rules : null;
+    }
+
+    private function saveRulesToCache(array $rules): void
+    {
+        $this->cache->save(
+            $this->serializer->serialize($rules),
+            self::CACHE_KEY,
+            [self::CACHE_TAG],
+            self::CACHE_LIFETIME
+        );
+    }
+
+    private function loadRulesFromFlag(): array
     {
         try {
             $rulesData = $this->loadFlag()->getFlagData();
@@ -166,6 +217,7 @@ class Rules
         $flag->setFlagData($rules);
         $flag->setData('last_update', $this->dateTime->gmtDate());
         $this->flagResource->save($flag);
+        $this->saveRulesToCache($rules);
     }
 
     private function deleteFlag(): void
@@ -174,5 +226,6 @@ class Rules
         if ($flag->getId()) {
             $this->flagResource->delete($flag);
         }
+        $this->cache->remove(self::CACHE_KEY);
     }
 }
