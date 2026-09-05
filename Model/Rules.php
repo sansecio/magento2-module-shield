@@ -15,6 +15,7 @@ class Rules
 {
     private const PROTOCOL_VERSION = '1';
     private const FLAG_CODE = 'sansec_shield_rules';
+    private const RULES_FETCH_TIMEOUT = 30;
 
     /** @var Config */
     private $config;
@@ -76,6 +77,7 @@ class Rules
     {
         $curl = $this->curlFactory->create();
         $curl->setCredentials($this->config->getLicenseKey(), $this->config->getLicenseKey());
+        $curl->setTimeout(self::RULES_FETCH_TIMEOUT);
         $curl->get(sprintf("%s?v=%d", $this->config->getRulesUrl(), self::PROTOCOL_VERSION));
 
         if ($curl->getStatus() !== 200) {
