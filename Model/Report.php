@@ -95,14 +95,14 @@ class Report
             'version' => $this->getPackageVersion(),
             'product_version' => $this->getProductVersion(),
             'request' => [
-                'method'  => $request->getMethod(),
-                'uri'     => $request->getRequestUri(),
-                'body'    => $request->getContent(),
-                'ips'     => $this->ip->collectRequestIPs(),
+                'method' => $request->getMethod(),
+                'uri' => $request->getRequestUri(),
+                'body' => $request->getContent(),
+                'ips' => $this->ip->collectRequestIPs(),
                 'headers' => $this->getRequestHeaders($request),
-                'scheme'  => $request->getScheme(),
-                'params'  => $request->getParams(),
-                'files'   => $request->getFiles(),
+                'scheme' => $request->getScheme(),
+                'params' => $request->getParams(),
+                'files' => $request->getFiles(),
             ]
         ]);
     }
