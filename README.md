@@ -21,6 +21,10 @@ IPs listed under *Whitelisted IP Addresses* bypass all Shield checks. Matching i
 
 If your store sits behind a reverse proxy or CDN, configure your webserver to rewrite the trusted proxy header into `REMOTE_ADDR` ([`ngx_http_realip_module`](https://nginx.org/en/docs/http/ngx_http_realip_module.html) on nginx, [`mod_remoteip`](https://httpd.apache.org/docs/2.4/mod/mod_remoteip.html) on Apache). Once `REMOTE_ADDR` reflects the real client IP, the whitelist will match it correctly.
 
+### Plugin order
+
+Shield runs as an around-plugin on `Magento\Framework\App\FrontControllerInterface` with `sortOrder="100"`. Any plugin that must run before Shield needs a `sortOrder` lower than 100 on the same interface. In Magento's plugin sorting, a plugin without a `sortOrder` runs first, ahead of any plugin that does declare one, no matter how low that value is. With this order, a request served straight from the built-in full page cache never reaches Shield, because the cache plugin returns its cached response without calling further down the chain. This is expected: cached pages are keyed by URL, so a malicious request is a cache miss and still goes through Shield like any other new request.
+
 ## Testing & live reports
 
 Test it by visiting your store and add `?SANSEC-SHIELD-TEST` to your URL, it should give you "permission denied". You'll see your first blocked attack appear instantly on your [Shield Dashboard](https://dashboard.sansec.io/d/account/shield). If you do not want reports, you can disable it with:
