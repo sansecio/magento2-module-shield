@@ -91,6 +91,32 @@ composer require sansec/magento2-module-shield
 
 If installing via Composer is not an option, you can copy the source files directly into `app/code/Sansec/Shield`, though you will need to handle updates manually from that point on.
 
+### Rules stopped updating, but Shield still blocks
+
+Symptom: the dashboard shows a signature date that stops advancing, while Shield keeps blocking attacks and keeps reporting them. The last-seen rule set is frozen at the moment the cron last ran.
+
+Shield schedules `sansec_shield_sync_rules` in its own cron group, `sansec`. A crontab that dispatches groups individually runs only the groups it names, so a setup like this never syncs rules:
+
+```
+*/5 * * * * bin/magento cron:run --group=default
+*/5 * * * * bin/magento cron:run --group=index
+*/5 * * * * bin/magento cron:run --group=consumers
+```
+
+Confirm it by checking that the log has no recent sync entries:
+
+```bash
+grep 'Finished synchronization' var/log/sansec_shield.log | tail -5
+```
+
+If the last entry is old, run the group by hand. It should log a sync within seconds:
+
+```bash
+bin/magento cron:run --group=sansec
+```
+
+Fix it by adding a `sansec` line to the crontab alongside the others, or by replacing the per-group lines with a plain `bin/magento cron:run`, which covers every group. See [Cron](#cron) above.
+
 ### Cron job not running on symlink-based deployments
 
 Magento's `cron:install` resolves symlinks to their real path, so after a new deployment the crontab still points to the old release directory. Ensure that the crontab uses your stable symlink (e.g. /data/web/current/bin/magento) instead.
