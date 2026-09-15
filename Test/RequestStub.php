@@ -112,4 +112,19 @@ class RequestStub implements RequestInterface
     {
         return $this->post;
     }
+
+    public function getHeaders()
+    {
+        return new \Laminas\Stdlib\Parameters($this->headers);
+    }
+
+    public function getFiles()
+    {
+        return new \Laminas\Stdlib\Parameters([]);
+    }
+
+    public function getScheme()
+    {
+        return 'https';
+    }
 }
