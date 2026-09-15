@@ -81,11 +81,40 @@ class RulesTest extends TestCase
         $this->assertEquals($this->rules, $this->rulesModel->loadRules());
     }
 
-    public function testCorruptCacheEntryFallsBackToFlag()
+    /**
+     * @dataProvider unusableCacheEntryProvider
+     */
+    public function testUnusableCacheEntryFallsBackToFlag(string $rulesData)
     {
-        $this->cache->method('load')->willReturn('{invalid json');
+        $this->cache->method('load')->willReturn($rulesData);
+        $this->flagResource->expects($this->once())->method('load');
         $this->flag->method('getFlagData')->willReturn($this->rules);
-        $this->cache->expects($this->once())->method('save');
+        $this->cache->expects($this->once())
+            ->method('save')
+            ->with(json_encode($this->rules), self::CACHE_KEY, ['SANSEC_SHIELD'], self::CACHE_LIFETIME);
+
+        $this->assertEquals($this->rules, $this->rulesModel->loadRules());
+    }
+
+    public static function unusableCacheEntryProvider(): array
+    {
+        return [
+            'invalid JSON' => ['{invalid json'],
+            'empty string' => [''],
+            'JSON null' => ['null'],
+            'JSON boolean' => ['false'],
+            'empty array' => ['[]'],
+        ];
+    }
+
+    public function testFailingCacheReadStillReturnsFlagRules()
+    {
+        $this->cache->method('load')->willThrowException(new \RuntimeException('backend down'));
+        $this->flagResource->expects($this->once())->method('load');
+        $this->flag->method('getFlagData')->willReturn($this->rules);
+        $this->cache->expects($this->once())
+            ->method('save')
+            ->with(json_encode($this->rules), self::CACHE_KEY, ['SANSEC_SHIELD'], self::CACHE_LIFETIME);
 
         $this->assertEquals($this->rules, $this->rulesModel->loadRules());
     }
@@ -122,6 +151,29 @@ class RulesTest extends TestCase
     {
         $this->flag->method('getId')->willReturn(1);
         $this->flagResource->expects($this->once())->method('delete')->with($this->flag);
+        $this->cache->expects($this->once())->method('remove')->with(self::CACHE_KEY);
+
+        $this->invoke('deleteFlag', []);
+    }
+
+    public function testFailingFlagSaveDoesNotWriteCache()
+    {
+        $this->flagResource->expects($this->once())
+            ->method('save')
+            ->with($this->flag)
+            ->willThrowException(new \RuntimeException('database unavailable'));
+        $this->cache->expects($this->never())->method('save');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('database unavailable');
+
+        $this->invoke('saveFlag', [$this->rules]);
+    }
+
+    public function testDeleteMissingFlagStillRemovesCache()
+    {
+        $this->flag->method('getId')->willReturn(null);
+        $this->flagResource->expects($this->never())->method('delete');
         $this->cache->expects($this->once())->method('remove')->with(self::CACHE_KEY);
 
         $this->invoke('deleteFlag', []);
