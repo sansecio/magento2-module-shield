@@ -19,6 +19,7 @@ class Rules
     private const CACHE_KEY = 'sansec_shield_rules';
     private const CACHE_TAG = 'SANSEC_SHIELD';
     private const CACHE_LIFETIME = 300;
+    private const RULES_FETCH_TIMEOUT = 30;
 
     /** @var Config */
     private $config;
@@ -127,6 +128,7 @@ class Rules
     {
         $curl = $this->curlFactory->create();
         $curl->setCredentials($this->config->getLicenseKey(), $this->config->getLicenseKey());
+        $curl->setTimeout(self::RULES_FETCH_TIMEOUT);
         $curl->get(sprintf("%s?v=%d", $this->config->getRulesUrl(), self::PROTOCOL_VERSION));
 
         if ($curl->getStatus() !== 200) {
