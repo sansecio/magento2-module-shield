@@ -1,19 +1,41 @@
 name: Test
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   test:
+    name: PHP ${{ matrix.php }} / Magento ${{ matrix.magento }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Oldest supported platform, installed from composer.lock
+          - { php: '7.2', magento: 'lock', framework: '' }
+          # PHP versions per release follow the magento/framework php constraint
+          - { php: '8.2', magento: '2.4.7', framework: '~103.0.7.0' }
+          - { php: '8.3', magento: '2.4.7', framework: '~103.0.7.0' }
+          - { php: '8.2', magento: '2.4.8', framework: '~103.0.8.0' }
+          - { php: '8.3', magento: '2.4.8', framework: '~103.0.8.0' }
+          - { php: '8.4', magento: '2.4.8', framework: '~103.0.8.0' }
+          - { php: '8.3', magento: '2.4.9', framework: '~103.0.9.0' }
+          - { php: '8.4', magento: '2.4.9', framework: '~103.0.9.0' }
+          - { php: '8.5', magento: '2.4.9', framework: '~103.0.9.0' }
     steps:
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
-          extensions: gd, mcrypt, curl, intl, xsl, mbstring, openssl, zip, soap, bcmath
+          php-version: ${{ matrix.php }}
+          extensions: gd, curl, intl, xsl, mbstring, openssl, zip, soap, bcmath
           tools: composer:2.9.8
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: composer global config http-basic.repo.magento.com ${{ secrets.MAGENTO_USERNAME }} ${{ secrets.MAGENTO_PASSWORD }}
-      - run: composer install
+      - if: matrix.framework == ''
+        run: composer install --no-interaction --no-progress
+      - if: matrix.framework != ''
+        run: |
+          composer require --no-update --no-interaction "magento/framework:${{ matrix.framework }}"
+          composer update --with-all-dependencies --no-interaction --no-progress
+          composer show magento/framework | grep ^versions
       - run: ./vendor/bin/phpunit --fail-on-warning Test
         env:
           SANSEC_SHIELD_RULES_PATH: Test/fixture/testrules.json
