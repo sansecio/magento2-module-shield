@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Communication/etc/communication.xsd">
+    <topic name="sansec.shield.report" request="string" is_synchronous="false">
+        <handler name="sansecShieldReport" type="Sansec\Shield\Model\Report\Consumer" method="process"/>
+    </topic>
+</config>
