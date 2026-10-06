@@ -86,7 +86,7 @@ class Shield
             return $proceed($request);
         }
 
-        $this->report->sendReport($request, $matchedRules);
+        $this->report->sendReportDeferred($request, $matchedRules);
 
         foreach ($matchedRules as $rule) {
             if ($rule->action === 'block') {
