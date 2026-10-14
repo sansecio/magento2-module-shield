@@ -14,6 +14,7 @@ class RequestStub implements RequestInterface
     private $params;
     private $cookies;
     private $post;
+    private $query;
 
     public function __construct(
         string $content = '',
@@ -22,7 +23,8 @@ class RequestStub implements RequestInterface
         array $headers  = [],
         array $params   = [],
         array $cookies  = [],
-        array $post     = []
+        ?array $post    = null,
+        ?array $query   = null
     ) {
         $this->content = $content;
         $this->method = $method;
@@ -30,7 +32,20 @@ class RequestStub implements RequestInterface
         $this->headers = $headers;
         $this->params = $params;
         $this->cookies = $cookies;
+
+        if ($query === null) {
+            $query = [];
+            $queryString = parse_url($uri, PHP_URL_QUERY);
+            parse_str(is_string($queryString) ? $queryString : '', $query);
+        }
+        if ($post === null) {
+            $post = strtoupper($method) === 'POST'
+                ? array_diff_key($params, $query)
+                : [];
+        }
+
         $this->post = new \Laminas\Stdlib\Parameters($post);
+        $this->query = new \Laminas\Stdlib\Parameters($query);
     }
 
     public function getContent()
@@ -111,5 +126,10 @@ class RequestStub implements RequestInterface
     public function getPost()
     {
         return $this->post;
+    }
+
+    public function getQuery()
+    {
+        return $this->query;
     }
 }

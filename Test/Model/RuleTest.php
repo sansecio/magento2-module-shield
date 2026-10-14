@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface as Logger;
 use Sansec\Shield\Model\Condition;
 use Sansec\Shield\Model\IP;
 use Sansec\Shield\Model\Rule;
+use Sansec\Shield\Test\RequestStub;
 
 class RuleTest extends \PHPUnit\Framework\TestCase
 {
@@ -51,6 +52,32 @@ class RuleTest extends \PHPUnit\Framework\TestCase
         ]);
         $rule = new Rule(new IP(), $logger, 'block', [
             new Condition('req.param.X', 'regex', 'hack\d+')
+        ]);
+
+        $this->assertTrue($rule->matches($request));
+    }
+
+    public function testRuleMatchesPostTargetFromRequestStub()
+    {
+        $request = new RequestStub('', 'POST', '/submit', [], ['payload' => 'hack1337']);
+        $rule = new Rule(new IP(), $this->createMock(Logger::class), 'block', [
+            new Condition('req.post', 'contains', 'hack1337')
+        ]);
+
+        $this->assertTrue($rule->matches($request));
+    }
+
+    public function testRuleMatchesQueryTargetFromRequestStub()
+    {
+        $request = new RequestStub(
+            '',
+            'POST',
+            '/submit?payload=hack1337',
+            [],
+            ['payload' => 'hack1337']
+        );
+        $rule = new Rule(new IP(), $this->createMock(Logger::class), 'block', [
+            new Condition('req.query', 'contains', 'hack1337')
         ]);
 
         $this->assertTrue($rule->matches($request));

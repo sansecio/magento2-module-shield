@@ -54,19 +54,37 @@ class WafTest extends TestCase
     /**
      * @dataProvider requestDataProvider
      */
-    public function testRequestDoesNotMatchAnyRules($content, $method, $uri, $headers, $params, $cookies)
+    public function testRequestDoesNotMatchAnyRules(
+        $content,
+        $method,
+        $uri,
+        $headers,
+        $params,
+        $cookies,
+        $post = null,
+        $query = null
+    )
     {
-        $request = new RequestStub($content, $method, $uri, $headers, $params, $cookies);
+        $request = new RequestStub($content, $method, $uri, $headers, $params, $cookies, $post, $query);
         $this->assertEmpty($this->waf->matchRequest($request), "Request should not match any rules");
     }
 
     /**
      * @dataProvider requestDataProvider
      */
-    public function testRulesDoNotLogAnyWarnings($content, $method, $uri, $headers, $params, $cookies)
+    public function testRulesDoNotLogAnyWarnings(
+        $content,
+        $method,
+        $uri,
+        $headers,
+        $params,
+        $cookies,
+        $post = null,
+        $query = null
+    )
     {
         $this->logger->expects($this->never())->method('warning');
-        $request = new RequestStub($content, $method, $uri, $headers, $params, $cookies);
+        $request = new RequestStub($content, $method, $uri, $headers, $params, $cookies, $post, $query);
         $this->waf->matchRequest($request);
     }
 

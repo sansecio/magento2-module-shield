@@ -21,6 +21,8 @@ $r = [
     'headers' => getallheaders() ?? [],
     'params'  => array_merge($_GET ?? [], $_POST ?? []),
     'cookies' => $_COOKIE ?? [],
+    'post'    => $_POST ?? [],
+    'query'   => $_GET ?? [],
 ];
 file_put_contents(
     '/tmp/request.log',
