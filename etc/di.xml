@@ -19,6 +19,7 @@
     <type name="Sansec\Shield\Model\Report">
         <arguments>
             <argument name="serializer" xsi:type="object">Sansec\Shield\Model\Serializer</argument>
+            <argument name="publisher" xsi:type="object">Magento\Framework\MessageQueue\PublisherInterface\Proxy</argument>
             <argument name="filteredHeaders" xsi:type="array">
                 <item name="Cookie" xsi:type="string">Cookie</item>
                 <item name="Set-Cookie" xsi:type="string">Set-Cookie</item>

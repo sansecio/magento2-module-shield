@@ -5,6 +5,7 @@
   "require": {
     "php": ">=7.2",
     "magento/framework": "*",
+    "magento/module-message-queue": "*",
     "ext-openssl": "*"
   },
   "require-dev": {
