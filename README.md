@@ -45,6 +45,10 @@ You can verify Shield rules sync every 5 minutes in `var/log/sansec_shield.log`.
 
 The Sansec Shield module is deliberately kept stable and there is no need to monitor for updates. If an essential new version is released, we will notify you via email.
 
+### Minimum supported version
+
+The minimum supported version is 1.0.16. Older versions do not apply all current Shield rules. The [hack protection guarantee](https://sansec.io/shield#what-are-the-guarantee-conditions) requires 1.0.16 or newer.
+
 To check your current version:
 
 ```bash
