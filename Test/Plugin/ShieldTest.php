@@ -25,13 +25,17 @@ namespace Magento\Framework\View\Element {
 namespace Sansec\Shield\Test\Plugin {
 
     use Magento\Framework\App\FrontControllerInterface;
+    use Magento\Framework\App\Response\Http as HttpResponse;
     use Magento\Framework\App\Response\HttpFactory as HttpResponseFactory;
+    use Magento\Framework\View\Element\Template;
     use Magento\Framework\View\Element\TemplateFactory;
     use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
     use PHPUnit\Framework\TestCase;
+    use Psr\Log\LoggerInterface as Logger;
     use Sansec\Shield\Model\Config;
     use Sansec\Shield\Model\IP;
     use Sansec\Shield\Model\Report;
+    use Sansec\Shield\Model\Rule;
     use Sansec\Shield\Model\Waf;
     use Sansec\Shield\Plugin\Shield;
     use Sansec\Shield\Test\RequestStub;
@@ -51,23 +55,45 @@ namespace Sansec\Shield\Test\Plugin {
             $_SERVER = $this->serverBackup;
         }
 
-        private function buildPlugin(array $whitelistedIps, InvocationOrder $expectedWafCalls): Shield
-        {
+        private function buildPlugin(
+            array $whitelistedIps,
+            InvocationOrder $expectedWafCalls,
+            array $matchedRules = [],
+            ?Report $report = null
+        ): Shield {
             $config = $this->createMock(Config::class);
             $config->method('isEnabled')->willReturn(true);
             $config->method('getWhitelistedIps')->willReturn($whitelistedIps);
 
             $waf = $this->createMock(Waf::class);
-            $waf->expects($expectedWafCalls)->method('matchRequest')->willReturn([]);
+            $waf->expects($expectedWafCalls)->method('matchRequest')->willReturn($matchedRules);
 
             return new Shield(
                 $config,
                 $waf,
-                $this->createMock(Report::class),
+                $report ?: $this->createMock(Report::class),
                 new IP(),
-                $this->createMock(HttpResponseFactory::class),
-                $this->createMock(TemplateFactory::class)
+                $this->buildResponseFactory(),
+                $this->buildTemplateFactory()
             );
+        }
+
+        private function buildResponseFactory(): HttpResponseFactory
+        {
+            $factory = $this->createMock(HttpResponseFactory::class);
+            $factory->method('create')->willReturn($this->createMock(HttpResponse::class));
+            return $factory;
+        }
+
+        private function buildTemplateFactory(): TemplateFactory
+        {
+            $template = $this->createMock(Template::class);
+            $template->method('setTemplate')->willReturnSelf();
+            $template->method('toHtml')->willReturn('');
+
+            $factory = $this->createMock(TemplateFactory::class);
+            $factory->method('create')->willReturn($template);
+            return $factory;
         }
 
         private function dispatch(Shield $plugin): bool
@@ -104,6 +130,36 @@ namespace Sansec\Shield\Test\Plugin {
             $_SERVER['REMOTE_ADDR'] = '203.0.113.42';
             $plugin = $this->buildPlugin([], $this->once());
             $this->dispatch($plugin);
+        }
+
+        public function testMatchedRuleDefersTheReport()
+        {
+            $_SERVER['REMOTE_ADDR'] = '203.0.113.42';
+
+            $rule = new Rule(new IP(), $this->createMock(Logger::class), 'report');
+            $report = $this->createMock(Report::class);
+            $report->expects($this->never())->method('sendReport');
+            $report->expects($this->once())->method('sendReportDeferred')->with(
+                $this->isInstanceOf(RequestStub::class),
+                [$rule]
+            );
+
+            $plugin = $this->buildPlugin([], $this->once(), [$rule], $report);
+            $this->assertTrue($this->dispatch($plugin));
+        }
+
+        public function testBlockingRuleDefersTheReportAndSkipsDispatch()
+        {
+            $_SERVER['REMOTE_ADDR'] = '203.0.113.42';
+
+            $rule = new Rule(new IP(), $this->createMock(Logger::class), 'block');
+            $report = $this->createMock(Report::class);
+            $report->expects($this->never())->method('sendReport');
+            $report->expects($this->once())->method('sendReportDeferred');
+            $report->expects($this->once())->method('logBlockedRequest');
+
+            $plugin = $this->buildPlugin([], $this->once(), [$rule], $report);
+            $this->assertFalse($this->dispatch($plugin));
         }
     }
 }
