@@ -24,6 +24,7 @@
                 <item name="Set-Cookie" xsi:type="string">Set-Cookie</item>
                 <item name="Authorization" xsi:type="string">Authorization</item>
             </argument>
+            <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
         </arguments>
     </type>
     <type name="Sansec\Shield\Model\IP">
@@ -60,11 +61,6 @@
         </arguments>
     </type>
     <type name="Sansec\Shield\Model\Rule">
-        <arguments>
-            <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
-        </arguments>
-    </type>
-    <type name="Sansec\Shield\Model\Report">
         <arguments>
             <argument name="logger" xsi:type="object">Sansec\Shield\Logger\VirtualLogger</argument>
         </arguments>
