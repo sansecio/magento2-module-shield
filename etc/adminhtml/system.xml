@@ -20,6 +20,12 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>When this is enabled, blocked requests are reported to the eComscan dashboard.</comment>
                 </field>
+                <field id="report_transport" translate="label comment" type="select" sortOrder="25" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Report Transport</label>
+                    <source_model>Sansec\Shield\Model\Config\Source\ReportTransport</source_model>
+                    <comment>Direct posts the report from the request itself, after the response has been flushed. Message Queue publishes the report to the sansec.shield.report topic instead; it requires consumers to run (the cron consumers_runner job or a supervisor process) and reports only reach the dashboard once a consumer has processed them.</comment>
+                    <depends><field id="report_enabled">1</field></depends>
+                </field>
                 <field id="whitelisted_ips" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Whitelisted IP Addresses</label>
                     <comment>One IP address per line. Requests from these IPs bypass Shield checks. Matches the connecting peer only (REMOTE_ADDR); proxy-forwarded headers are intentionally ignored.</comment>
