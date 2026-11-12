@@ -3,11 +3,12 @@
 namespace Sansec\Shield\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Encryption\EncryptorInterface;
 
 class Config
 {
     private const XML_PATH_ENABLED = 'sansec_shield/general/enabled';
-    private const XML_PATH_LICENSE_KEY = 'sansec_shield/general/license_key';
+    public const XML_PATH_LICENSE_KEY = 'sansec_shield/general/license_key';
     private const XML_PATH_RULES_URL = 'sansec_shield/general/rules_url';
     private const XML_PATH_REPORT_ENABLED = 'sansec_shield/general/report_enabled';
     private const XML_PATH_REPORT_URL = 'sansec_shield/general/report_url';
@@ -16,9 +17,21 @@ class Config
     /** @var ScopeConfigInterface */
     private $config;
 
-    public function __construct(ScopeConfigInterface $config)
+    /** @var EncryptorInterface */
+    private $encryptor;
+
+    public function __construct(ScopeConfigInterface $config, EncryptorInterface $encryptor)
     {
         $this->config = $config;
+        $this->encryptor = $encryptor;
+    }
+
+    /**
+     * Whether a value is in Magento's encrypted "<keyVersion>:<cipherVersion>:<payload>" format.
+     */
+    public static function isEncrypted(string $value): bool
+    {
+        return preg_match('/^\d+:\d+:/', $value) === 1;
     }
 
     public function isEnabled(): bool
@@ -34,7 +47,16 @@ class Config
 
     public function getLicenseKey(): string
     {
-        return $this->config->getValue(self::XML_PATH_LICENSE_KEY) ?? '';
+        $value = (string) $this->config->getValue(self::XML_PATH_LICENSE_KEY);
+
+        // Keys saved before encryption was introduced, or supplied through
+        // app/etc/env.php, app/etc/config.php or environment variables, are
+        // plain text and must be used as-is.
+        if (!self::isEncrypted($value)) {
+            return $value;
+        }
+
+        return $this->encryptor->decrypt($value);
     }
 
     public function getRulesUrl(): string
