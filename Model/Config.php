@@ -37,7 +37,10 @@ class Config
     public function isEnabled(): bool
     {
         $enabled = (bool) $this->config->getValue(self::XML_PATH_ENABLED);
-        return $enabled && $this->getLicenseKey() !== '';
+        // Check the stored value rather than the decrypted key, so a key that
+        // fails to decrypt surfaces as an "Invalid license key" sync error
+        // instead of silently disabling Shield.
+        return $enabled && (string) $this->config->getValue(self::XML_PATH_LICENSE_KEY) !== '';
     }
 
     public function isReportEnabled(): bool

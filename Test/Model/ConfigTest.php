@@ -63,6 +63,17 @@ class ConfigTest extends TestCase
         $this->assertTrue($this->makeLicenseConfig($encrypted, '1')->isEnabled());
     }
 
+    public function testStaysEnabledWhenLicenseKeyCannotBeDecrypted()
+    {
+        // E.g. after the crypt key changed: keep Shield on so rule sync fails
+        // loudly with "Invalid license key" instead of Shield silently disabling.
+        $encrypted = EncryptorFactory::create($this, 'fedcba9876543210fedcba9876543210')->encrypt(self::LICENSE_KEY);
+        $config = $this->makeLicenseConfig($encrypted, '1');
+
+        $this->assertNotSame(self::LICENSE_KEY, $config->getLicenseKey());
+        $this->assertTrue($config->isEnabled());
+    }
+
     public function testIsDisabledWithoutLicenseKey()
     {
         $this->assertFalse($this->makeLicenseConfig(null, '1')->isEnabled());

@@ -13,13 +13,13 @@ use PHPUnit\Framework\TestCase;
  */
 class EncryptorFactory
 {
-    public static function create(TestCase $test): Encryptor
+    public static function create(TestCase $test, string $cryptKey = '0123456789abcdef0123456789abcdef'): Encryptor
     {
         $deploymentConfig = $test->getMockBuilder(DeploymentConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $deploymentConfig->method('get')->willReturnCallback(function ($key) {
-            return $key === 'crypt/key' ? '0123456789abcdef0123456789abcdef' : null;
+        $deploymentConfig->method('get')->willReturnCallback(function ($key) use ($cryptKey) {
+            return $key === 'crypt/key' ? $cryptKey : null;
         });
         return new Encryptor(new Random(), $deploymentConfig, new KeyValidator());
     }
