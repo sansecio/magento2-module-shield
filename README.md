@@ -15,6 +15,18 @@ bin/magento sansec:shield:sync-rules
 
 You can configure your license key and other settings via System → Configuration → Security → Sansec Shield.
 
+### License key storage
+
+The license key is stored encrypted in the database and is masked in the admin panel. It is registered as a sensitive value, so `bin/magento app:config:dump` does not write it to `app/etc/config.php`.
+
+Keys saved by earlier versions are encrypted automatically when you run `bin/magento setup:upgrade`. Keys set in `app/etc/env.php`, `app/etc/config.php` or through environment variables keep working as they are. If an earlier `app:config:dump` wrote your key into `app/etc/config.php`, remove it from that file and set it again:
+
+```bash
+bin/magento config:set sansec_shield/general/license_key <your license key>
+```
+
+If you downgrade to a version older than this change, re-enter your license key afterwards, as older versions cannot read the encrypted value.
+
 ### Whitelisted IP addresses
 
 IPs listed under *Whitelisted IP Addresses* bypass all Shield checks. Matching is performed against the connecting peer (`REMOTE_ADDR`) only; proxy-forwarded headers such as `X-Forwarded-For` and `CF-Connecting-IP` are intentionally ignored because they are client-controlled and can be spoofed.

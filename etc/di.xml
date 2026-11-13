@@ -8,6 +8,13 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="sansec_shield/general/license_key" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="Magento\Framework\App\FrontControllerInterface">
         <plugin name="sansec_shield" type="Sansec\Shield\Plugin\Shield"/>
     </type>
