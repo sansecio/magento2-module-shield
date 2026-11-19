@@ -14,7 +14,7 @@ use Magento\Framework\Module\Dir\Reader as ModuleDirReader;
 
 class Rules
 {
-    private const PROTOCOL_VERSION = '1';
+    private const PROTOCOL_VERSION = '2';
     private const FLAG_CODE = 'sansec_shield_rules';
     private const CACHE_KEY = 'sansec_shield_rules';
     private const CACHE_TAG = 'SANSEC_SHIELD';
