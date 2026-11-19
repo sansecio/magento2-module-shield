@@ -49,13 +49,38 @@ class IP
 
     public function ipMatchesCidr(string $ip, string $cidr): bool
     {
-        [$subnet, $bits] = explode('/', $cidr);
+        $parts = array_map('trim', explode('/', trim($cidr)));
+        if (count($parts) !== 2 || !preg_match('/^\d+\z/', $parts[1])) {
+            return false;
+        }
+        [$subnet, $bits] = $parts;
 
-        $ip = ip2long($ip);
-        $subnet = ip2long($subnet);
-        $mask = -1 << (32 - $bits);
-        $subnet &= $mask;
+        if (filter_var($ip, FILTER_VALIDATE_IP) === false || filter_var($subnet, FILTER_VALIDATE_IP) === false) {
+            return false;
+        }
 
-        return ($ip & $mask) === $subnet;
+        $ip = inet_pton($ip);
+        $subnet = inet_pton($subnet);
+        if (strlen($ip) !== strlen($subnet)) {
+            return false;
+        }
+
+        $bits = (int) $bits;
+        if ($bits > strlen($ip) * 8) {
+            return false;
+        }
+
+        $bytes = intdiv($bits, 8);
+        if (substr($ip, 0, $bytes) !== substr($subnet, 0, $bytes)) {
+            return false;
+        }
+
+        $remainder = $bits % 8;
+        if ($remainder === 0) {
+            return true;
+        }
+
+        $mask = (0xff << (8 - $remainder)) & 0xff;
+        return (ord($ip[$bytes]) & $mask) === (ord($subnet[$bytes]) & $mask);
     }
 }
