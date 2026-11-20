@@ -11,6 +11,19 @@ use Sansec\Shield\Test\RequestStub;
 
 class RuleTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var array */
+    private $serverBackup;
+
+    protected function setUp(): void
+    {
+        $this->serverBackup = $_SERVER;
+    }
+
+    protected function tearDown(): void
+    {
+        $_SERVER = $this->serverBackup;
+    }
+
     public function testRuleContains()
     {
         $request = $this->createConfiguredMock(Http::class, ['getContent' => 'hack1337']);
@@ -177,5 +190,57 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     {
         $rule = new Rule(new IP(), $this->createMock(Logger::class), 'block', []);
         $this->assertFalse($rule->matches($this->createMock(Http::class)));
+    }
+
+    /**
+     * @dataProvider ipEqualsProvider
+     */
+    public function testRuleEqualsComparesNormalisedIPs(string $remoteAddr, string $conditionValue, bool $expected)
+    {
+        $_SERVER['REMOTE_ADDR'] = $remoteAddr;
+        $rule = new Rule(new IP(['REMOTE_ADDR']), $this->createMock(Logger::class), 'block', [
+            new Condition('req.ip', 'equals', $conditionValue)
+        ]);
+        $this->assertSame($expected, $rule->matches($this->createMock(Http::class)));
+    }
+
+    public static function ipEqualsProvider(): array
+    {
+        return [
+            'IPv4' => ['203.0.113.5', '203.0.113.5', true],
+            'IPv4-mapped client, IPv4 rule' => ['::ffff:203.0.113.5', '203.0.113.5', true],
+            'IPv4 client, IPv4-mapped rule' => ['203.0.113.5', '::ffff:203.0.113.5', true],
+            'IPv6 compression variants' => ['2606:4700::1', '2606:4700:0:0::1', true],
+            'IPv6 case variants' => ['2606:4700::abcd', '2606:4700::ABCD', true],
+            'different IPv4' => ['203.0.113.6', '203.0.113.5', false],
+            'different IPv6' => ['2606:4700::2', '2606:4700::1', false],
+            'invalid rule value' => ['203.0.113.5', '203.0.113.5x', false],
+            'IPv4 prefix of rule value' => ['203.0.113.5', '203.0.113.50', false],
+        ];
+    }
+
+    /**
+     * @dataProvider ipNetworkProvider
+     */
+    public function testRuleNetworkMatchesNormalisedIPs(string $remoteAddr, string $cidr, bool $expected)
+    {
+        $_SERVER['REMOTE_ADDR'] = $remoteAddr;
+        $rule = new Rule(new IP(['REMOTE_ADDR']), $this->createMock(Logger::class), 'block', [
+            new Condition('req.ip', 'network', $cidr)
+        ]);
+        $this->assertSame($expected, $rule->matches($this->createMock(Http::class)));
+    }
+
+    public static function ipNetworkProvider(): array
+    {
+        return [
+            'IPv4-mapped client, IPv4 CIDR' => ['::ffff:198.51.100.7', '198.51.100.0/24', true],
+            'IPv4-mapped client, IPv4-mapped CIDR' => ['::ffff:198.51.100.7', '::ffff:198.51.100.0/120', true],
+            'IPv4-mapped client, IPv4-mapped range' => ['::ffff:198.51.100.7', '::ffff:0:0/96', true],
+            'IPv4-mapped client, IPv6 /0' => ['::ffff:198.51.100.7', '::/0', false],
+            'IPv6 client, IPv6 /0' => ['2606:4700::1', '::/0', true],
+            'IPv4-mapped client outside IPv4-mapped CIDR' => ['::ffff:198.51.101.7', '::ffff:198.51.100.0/120', false],
+            'IPv6 client, IPv4-mapped range' => ['2606:4700::1', '::ffff:0:0/96', false],
+        ];
     }
 }

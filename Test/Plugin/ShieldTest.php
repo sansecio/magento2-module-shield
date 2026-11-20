@@ -105,5 +105,46 @@ namespace Sansec\Shield\Test\Plugin {
             $plugin = $this->buildPlugin([], $this->once());
             $this->dispatch($plugin);
         }
+
+        /**
+         * @dataProvider whitelistNotationProvider
+         */
+        public function testWhitelistMatchesEquivalentNotations(string $remoteAddr, string $whitelisted)
+        {
+            $_SERVER['REMOTE_ADDR'] = $remoteAddr;
+            $plugin = $this->buildPlugin([$whitelisted], $this->never());
+            $this->assertTrue($this->dispatch($plugin));
+        }
+
+        public static function whitelistNotationProvider(): array
+        {
+            return [
+                'IPv4-mapped client, IPv4 entry' => ['::ffff:203.0.113.42', '203.0.113.42'],
+                'IPv4 client, IPv4-mapped entry' => ['203.0.113.42', '::ffff:203.0.113.42'],
+                'IPv6 compression variants' => ['2001:db8:0:0::1', '2001:db8::1'],
+                'IPv6 case variants' => ['2001:db8::abcd', '2001:DB8::ABCD'],
+                'unparsable client, identical entry' => ['localhost', 'localhost'],
+            ];
+        }
+
+        /**
+         * @dataProvider whitelistMismatchProvider
+         */
+        public function testWhitelistDoesNotMatchOtherAddresses(string $remoteAddr, string $whitelisted)
+        {
+            $_SERVER['REMOTE_ADDR'] = $remoteAddr;
+            $plugin = $this->buildPlugin([$whitelisted], $this->once());
+            $this->dispatch($plugin);
+        }
+
+        public static function whitelistMismatchProvider(): array
+        {
+            return [
+                'different IPv4' => ['203.0.113.43', '203.0.113.42'],
+                'different IPv4-mapped' => ['::ffff:203.0.113.43', '203.0.113.42'],
+                'unparsable client' => ['not-an-ip', '203.0.113.42'],
+                'unparsable entry' => ['203.0.113.42', '203.0.113.42x'],
+            ];
+        }
     }
 }

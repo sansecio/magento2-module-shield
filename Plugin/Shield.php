@@ -58,7 +58,15 @@ class Shield
         if ($remoteAddr === null) {
             return false;
         }
-        return in_array($remoteAddr, $whitelisted, true);
+        $normalizedRemoteAddr = $this->ip->normalizeIP($remoteAddr);
+        foreach ($whitelisted as $entry) {
+            if ($entry === $remoteAddr
+                || ($normalizedRemoteAddr !== null && $this->ip->normalizeIP($entry) === $normalizedRemoteAddr)
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function getAccessDeniedResponse(): ResponseInterface
