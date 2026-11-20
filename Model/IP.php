@@ -4,6 +4,8 @@ namespace Sansec\Shield\Model;
 
 class IP
 {
+    private const IPV4_MAPPED_PREFIX = "\0\0\0\0\0\0\0\0\0\0\xff\xff";
+
     /** @var string[]|null */
     private $requestIPs;
 
@@ -18,6 +20,26 @@ class IP
     private function isPrivateIP(string $ip): bool
     {
         return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false;
+    }
+
+    private function isIPv4Mapped(string $packed): bool
+    {
+        return strlen($packed) === 16 && strncmp($packed, self::IPV4_MAPPED_PREFIX, 12) === 0;
+    }
+
+    private function unwrapIPv4Mapped(string $packed): string
+    {
+        return $this->isIPv4Mapped($packed) ? substr($packed, 12) : $packed;
+    }
+
+    public function normalizeIP(string $ip): ?string
+    {
+        $ip = trim($ip);
+        if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
+            return null;
+        }
+
+        return inet_ntop($this->unwrapIPv4Mapped(inet_pton($ip)));
     }
 
     public function getRemoteAddr(): ?string
@@ -35,8 +57,8 @@ class IP
                     continue;
                 }
                 foreach (preg_split('/[\s,]+/', $_SERVER[$header]) as $ip) {
-                    $ip = trim($ip);
-                    if (empty($ip) || $this->isPrivateIP($ip)) {
+                    $ip = $this->normalizeIP($ip);
+                    if ($ip === null || $this->isPrivateIP($ip)) {
                         continue;
                     }
                     $requestIPs[] = $ip;
@@ -59,14 +81,18 @@ class IP
             return false;
         }
 
-        $ip = inet_pton($ip);
+        $ip = $this->unwrapIPv4Mapped(inet_pton($ip));
         $subnet = inet_pton($subnet);
-        if (strlen($ip) !== strlen($subnet)) {
-            return false;
-        }
 
         $bits = (int) $bits;
-        if ($bits > strlen($ip) * 8) {
+        if ($bits > strlen($subnet) * 8) {
+            return false;
+        }
+        if ($bits >= 96 && $this->isIPv4Mapped($subnet)) {
+            $subnet = substr($subnet, 12);
+            $bits -= 96;
+        }
+        if (strlen($ip) !== strlen($subnet)) {
             return false;
         }
 

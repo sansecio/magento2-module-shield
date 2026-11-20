@@ -71,6 +71,18 @@ class IPTest extends TestCase
             'IPv6 outside /128' => ['2a4e:513f:9c4b:1736::2', '2a4e:513f:9c4b:1736::1/128', false],
             'IPv4 client, IPv6 CIDR' => ['82.202.160.5', '2a4e:513f:9c4b:1736::/64', false],
             'IPv4 client, IPv6 /0' => ['82.202.160.5', '::/0', false],
+            'IPv4 client, IPv6 /64 covering the mapped range' => ['198.51.100.7', '::/64', false],
+            'IPv4 client, IPv4-mapped prefix below 96' => ['198.51.100.7', '::ffff:0:0/80', false],
+            'IPv4 client in leading zeros, IPv4-mapped prefix below 96' => ['0.0.1.1', '::ffff:0:0/80', false],
+            'IPv4-mapped client, IPv6 /0' => ['::ffff:198.51.100.7', '::/0', false],
+            'IPv4 client, IPv4-mapped /96' => ['198.51.100.7', '::ffff:0:0/96', true],
+            'IPv4 client, IPv4-mapped /120' => ['198.51.100.7', '::ffff:198.51.100.0/120', true],
+            'IPv4 client, IPv4-mapped /128' => ['198.51.100.7', '::ffff:198.51.100.7/128', true],
+            'IPv4 client outside IPv4-mapped /120' => ['198.51.101.7', '::ffff:198.51.100.0/120', false],
+            'IPv4-mapped client, IPv4 CIDR' => ['::ffff:198.51.100.7', '198.51.100.0/24', true],
+            'IPv4-mapped client, IPv4-mapped CIDR' => ['::ffff:198.51.100.7', '::ffff:198.51.100.0/120', true],
+            'IPv4-mapped client outside IPv4 CIDR' => ['::ffff:198.51.101.7', '198.51.100.0/24', false],
+            'IPv6 client, IPv4-mapped /96' => ['2a4e:513f:9c4b:1736::1', '::ffff:0:0/96', false],
             'IPv6 client, 0.0.0.0/8' => ['2a4e:513f:9c4b:1736::1', '0.0.0.0/8', false],
             'IPv6 client, 0.0.0.0/0' => ['2a4e:513f:9c4b:1736::1', '0.0.0.0/0', false],
             'invalid client IP' => ['not-an-ip', '0.0.0.0/8', false],
@@ -82,6 +94,7 @@ class IPTest extends TestCase
             'CIDR with invalid subnet' => ['10.0.0.1', '10.0.0/8', false],
             'empty CIDR' => ['10.0.0.1', '', false],
             'IPv4 prefix above 32' => ['10.0.0.1', '10.0.0.0/33', false],
+            'IPv4 prefix above 32, same address' => ['10.0.0.0', '10.0.0.0/33', false],
             'IPv4 negative prefix' => ['10.0.0.1', '10.0.0.0/-1', false],
             'IPv6 prefix above 128' => ['2a4e:513f:9c4b:1736::1', '2a4e:513f:9c4b:1736::/129', false],
             'IPv4 prefix with leading zero' => ['10.20.30.40', '10.0.0.0/08', true],
@@ -92,6 +105,64 @@ class IPTest extends TestCase
             'IPv4 decimal prefix' => ['10.0.0.1', '10.0.0.0/8.0', false],
             'IPv4 exponent prefix' => ['10.0.0.1', '10.0.0.0/1e1', false],
             'IPv6 client with zone id' => ['fe80::1%eth0', 'fe80::/10', false],
+        ];
+    }
+
+    /**
+     * @dataProvider collectRequestIPsProvider
+     */
+    public function testCollectRequestIPsNormalisesAddresses(string $forwardedFor, array $expected)
+    {
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = $forwardedFor;
+        $this->assertSame($expected, (new IP(['HTTP_X_FORWARDED_FOR']))->collectRequestIPs());
+    }
+
+    public static function collectRequestIPsProvider(): array
+    {
+        return [
+            'IPv4' => ['203.0.113.5', ['203.0.113.5']],
+            'IPv4-mapped IPv6' => ['::ffff:203.0.113.5', ['203.0.113.5']],
+            'IPv4-mapped IPv6 uppercase' => ['::FFFF:203.0.113.5', ['203.0.113.5']],
+            'IPv4-mapped IPv6 hex notation' => ['::ffff:cb00:7105', ['203.0.113.5']],
+            'IPv4-mapped IPv6 expanded' => ['0:0:0:0:0:ffff:203.0.113.5', ['203.0.113.5']],
+            'IPv4 and its mapped form deduplicated' => ['203.0.113.5, ::ffff:203.0.113.5', ['203.0.113.5']],
+            'IPv6 compression variants deduplicated' => [
+                '2606:4700:0:0::1, 2606:4700::1, 2606:4700:0:0:0:0:0:0001',
+                ['2606:4700::1'],
+            ],
+            'IPv6 case variants deduplicated' => ['2606:4700::ABCD, 2606:4700::abcd', ['2606:4700::abcd']],
+            'IPv4-mapped private address dropped' => ['::ffff:10.0.0.1', []],
+            'IPv4-mapped loopback dropped' => ['::ffff:127.0.0.1', []],
+            'invalid address dropped' => ['not-an-ip', []],
+            'invalid IPv4-mapped address dropped' => ['::ffff:999.0.0.1', []],
+            'IPv6 with zone id dropped' => ['fe80::1%eth0', []],
+        ];
+    }
+
+    /**
+     * @dataProvider normalizeIPProvider
+     */
+    public function testNormalizeIP(string $ip, ?string $expected)
+    {
+        $this->assertSame($expected, (new IP())->normalizeIP($ip));
+    }
+
+    public static function normalizeIPProvider(): array
+    {
+        return [
+            'IPv4' => ['203.0.113.5', '203.0.113.5'],
+            'IPv4 with surrounding spaces' => [' 203.0.113.5 ', '203.0.113.5'],
+            'IPv4-mapped IPv6' => ['::ffff:203.0.113.5', '203.0.113.5'],
+            'IPv4-mapped IPv6 hex notation' => ['::FFFF:CB00:7105', '203.0.113.5'],
+            'IPv4-mapped private address' => ['::ffff:10.0.0.1', '10.0.0.1'],
+            'IPv6 compressed' => ['2606:4700:0:0::1', '2606:4700::1'],
+            'IPv6 uppercase' => ['2606:4700::ABCD', '2606:4700::abcd'],
+            'IPv6 that only resembles a mapped address' => ['::fffe:203.0.113.5', '::fffe:cb00:7105'],
+            'invalid address' => ['not-an-ip', null],
+            'empty string' => ['', null],
+            'invalid IPv4-mapped address' => ['::ffff:999.0.0.1', null],
+            'IPv6 with zone id' => ['fe80::1%eth0', null],
+            'CIDR' => ['203.0.113.0/24', null],
         ];
     }
 }

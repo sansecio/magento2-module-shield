@@ -131,6 +131,21 @@ class Rule
         }
     }
 
+    private function ipValuesContain($value, string $ip): bool
+    {
+        $expected = $this->ip->normalizeIP($ip);
+        if ($expected === null) {
+            return false;
+        }
+
+        foreach ($this->extractScalarValues($value) as $candidate) {
+            if ($this->ip->normalizeIP($candidate) === $expected) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private function targetValueMatchesCondition($value, Condition $condition): bool
     {
         if ($condition->type === 'network') {
@@ -144,6 +159,13 @@ class Rule
                 }
             }
             return false;
+        }
+
+        if ($condition->type === 'equals'
+            && $condition->target === 'req.ip'
+            && $this->ipValuesContain($value, $condition->value)
+        ) {
+            return true;
         }
 
         foreach ($this->extractScalarValues($value) as $scalarValue) {
